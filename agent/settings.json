@@ -1,0 +1,21 @@
+{
+  "lastChangelogVersion": "0.75.5",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.5",
+  "hideThinkingBlock": false,
+  "defaultThinkingLevel": "high",
+  "enabledModels": [
+    "openai-codex/gpt-5.4",
+    "openai-codex/gpt-5.4-mini",
+    "openai-codex/gpt-5.5"
+  ],
+  "packages": [
+    "../../../repo/etc/assisted-by",
+    "git:https://github.com/scarf005/assisted-by",
+    "npm:@alexanderfortin/pi-token-usage",
+    "../../../repo/assisted-by",
+    "npm:pi-ask-user",
+    "../../../repo/etc/one-time-contribution/dot314/extensions/move-session.ts",
+    "npm:pi-subagents"
+  ]
+}

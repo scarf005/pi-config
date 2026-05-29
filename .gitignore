@@ -1,0 +1,9 @@
+# Private state
+agent/auth.json
+agent/run-history.jsonl
+agent/sessions/
+
+# Downloaded/generated dependencies and caches
+agent/bin/
+agent/git/github.com/
+agent/npm/node_modules/

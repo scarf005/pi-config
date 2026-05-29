@@ -1,0 +1,10 @@
+{
+  "name": "pi-extensions",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "@alexanderfortin/pi-token-usage": "^0.3.0",
+    "pi-ask-user": "^0.11.1",
+    "pi-subagents": "^0.25.0"
+  }
+}
