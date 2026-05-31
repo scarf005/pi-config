@@ -3,12 +3,13 @@
 ## Priority
 
 - Treat all applicable `AGENTS.md` rules as gates for every task, including metadata, related links, commits, and automation rules.
+- Keep this file for always-on behavior; load matching skills only for truly narrow workflows.
 
 ## Communication
 
 - Reply in Korean honorifics. Answer directly; do not start with meta phrases like `확인했습니다`, `설명했습니다`, `답변했습니다`, or `처리했습니다`.
 - Answer questions/objections before acting unless execution is explicit. If asked only to analyze/investigate, do not edit, commit, push, or open/update PRs.
-- If corrected, inspect evidence first, state only verified facts, apply the fix now, and say what remains unverified. Do not say `next time` or `앞으로`.
+- If corrected, apply the fix now and update `AGENTS.md` before final response when the mistake can recur. Do not use formulaic apologies or evidence-report prefaces such as `지금 확인된 사실은`; do not say `next time` or `앞으로`.
 - Use user-provided references/artifacts directly before broad search or alternatives.
 - Avoid rhetorical contrast patterns such as `not just A` or `단순 A가 아닌`.
 - For negative yes/no questions in Korean, use `네` to confirm the negative premise and `아니요` only to reject it.
@@ -34,16 +35,13 @@
 - Verify facts with diagnostics before explaining corrections.
 - Before finalizing, review assistant changes for simpler, smaller, clearer code without reducing scope.
 - When writing issues, PRs, Markdown, docs, changelogs, release notes, or similar text, include direct related URLs/issues/PRs; search when relevant, and state if none are available.
-- For web references, include direct links and check `/llms.txt` when relevant.
 
 ## Validation
 
 - Prefer TDD; add meaningful behavior tests. If requested TDD or bugfix, commit failing tests before fixes, verify failure, then verify pass.
 - Cover boundaries, negative paths, relevant state combinations, and adjacent regressions.
-- Test web projects with `playwright-cli`.
 - Do not run commands that invoke forbidden formatters transitively.
 - Fix validation failures on touched files before final summary.
-- If formatter setup is missing, configure the documented target-scoped workflow and rerun before PR updates.
 - Do not call failures pre-existing unless proven on the base branch.
 - For CI/release/platform/build changes, run matching local workflows when feasible or state unverified paths.
 
@@ -76,25 +74,11 @@
 - When templates ask for testing/reviewer suggestions, include concrete steps and expected results beyond commands run.
 - Before PR titles, read changelog/title guidelines and make subjects player-facing when required.
 - For web UI PRs, attach `playwright-cli` screenshots.
+- If formatter setup is missing, configure the documented target-scoped workflow and rerun before PR updates.
 - For PRs from external reports, link the report and rerun timed-out validation with sufficient timeout before calling it unverified.
-- For registries/package indexes/distribution channels, do not vendor content into the app tree unless requested.
 - Update PR body/checklist after follow-up changes affecting implementation, compatibility, or validation.
 
 ## Coding conventions
 
-- Bootstrap web projects from `https://github.com/scarf005/preset`.
-- Prefer FP, TypeScript options objects for 3+ args, C++ structs, single-line arrow functions, ternaries, and Vite `base: "./"`.
+- Prefer FP, TypeScript options objects for 3+ args, C++ structs, single-line arrow functions, and ternaries.
 - YAML: use inline syntax for short maps/lists, e.g. `env: { FOO: bar }`, `foo: [1, 2, 3]`.
-
-## Web
-
-- Keep UI minimal: no extra copy, branding, badges, links, gradients, animation, or border radius unless requested or required.
-- Default to white theme; support `prefers-color-scheme`.
-- Preact: prefer Signals/deepsignal; avoid hooks unless architecture/library boundaries require them.
-- Before changing Deno tests, read Deno testing, snapshot, and fast-check Deno docs.
-
-## Local
-
-- `/tmp/pi` may be modified. Use SI units, RFC 3339 timestamps, and XDG paths.
-- For XDG env vars, update `~/.fish/config/conf.d/xdg.fish`.
-- `phone` is Termux over Tailscale port `8022`; copy downloads with `scp <file> phone:~/storage/downloads/`.
