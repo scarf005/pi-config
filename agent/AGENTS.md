@@ -42,6 +42,7 @@
 - Before finalizing, review assistant changes for simpler, smaller, clearer code without reducing scope.
 - For CSS state styling, avoid reusing generic class names across unrelated components; verify state classes do not match structural selectors elsewhere before declaring visual bugs fixed.
 - When writing issues, PRs, Markdown, docs, changelogs, release notes, or similar text, include direct related URLs/issues/PRs and search when relevant. If no related items are found, omit the related-links note instead of saying none were found.
+- When writing any Markdown, docs, issues, PRs, release notes, skills, or similar prose, keep it terse: include only actionable or user-relevant content, link or invoke source configs/tools instead of copying their contents, and delete obvious metadata or statistics.
 
 ## Validation
 
@@ -78,7 +79,7 @@
 - When the user explicitly asks to open/create/update a PR, complete the PR action and obtain the PR URL before the final response unless blocked; if blocked, state the blocker and the exact command/result.
 - Read PR templates and existing PR bodies before editing; preserve human content, screenshots, artifacts, checklist state, related links, and prose.
 - Patch existing PR bodies minimally; save the current body first. Do not regenerate sections when a targeted patch is enough.
-- Before creating/updating PR bodies, run task-specific `gh search issues`/`gh search prs`, add discovered related links, and remove generic filler. Do not mention absent search results in the PR body.
+- Before creating/updating PR bodies, run task-specific `gh search issues`/`gh search prs`, add discovered related links, and remove generic filler. Do not mention absent search results in PR bodies or comments; omit the section instead of writing phrases like `no related issues were found`.
 - If a PR resolves an issue, put `close #NUMBER` before any full URL references.
 - When opening PRs, be extremely terse: fill only required template fields with concrete bullets, omit optional filler, and keep summary/testing to the minimum needed.
 - Avoid redundant prose covered by templates/checklists. Keep PR bodies terse; do not fill optional fields with meaningless text.
