@@ -4,6 +4,7 @@
 
 - Treat all applicable `AGENTS.md` rules as gates for every task, including metadata, related links, commits, and automation rules.
 - Keep this file for always-on behavior; load matching skills only for truly narrow workflows.
+- Do not edit `AGENTS.md` solely to force skill loading; make the skill metadata match the workflow instead.
 
 ## Communication
 
