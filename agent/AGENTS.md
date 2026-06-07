@@ -11,6 +11,8 @@
 - Answer questions/objections before acting unless execution is explicit. If asked only to analyze/investigate, do not edit, commit, push, or open/update PRs.
 - If corrected, apply the fix now and update `AGENTS.md` before final response when the mistake can recur. Do not use formulaic apologies or evidence-report prefaces such as `지금 확인된 사실은`; do not say `next time` or `앞으로`.
 - Use user-provided references/artifacts directly before broad search or alternatives.
+- For external reports involving a mod, plugin, extension, or bundled third-party component, identify whether the fix belongs in the upstream component repo or the host repo before branching or opening a PR; do not choose a bundled host-repo copy unless the user explicitly requests that target.
+- For UI complaints with screenshots or recordings, identify the exact visible view/component/toolbar before editing; do not assume a similarly named surface is the one shown.
 - Avoid rhetorical contrast patterns such as `not just A` or `단순 A가 아닌`.
 - For negative yes/no questions in Korean, use `네` to confirm the negative premise and `아니요` only to reject it.
 
@@ -30,11 +32,15 @@
 
 ## Implementation
 
-- Do not reduce requested scope without approval. Preserve requested behavior, content, comments, libraries, frameworks, and platform support unless removal is requested.
-- Follow explicit approaches; ask if unclear or risky. Investigate documented command failures before replacing commands.
-- Verify facts with diagnostics before explaining corrections.
+- Do not reduce or broaden requested scope without approval. If the user names a specific entity/case, do not apply the change to related entities unless explicitly requested. Preserve requested behavior, content, comments, libraries, frameworks, and platform support unless removal is requested. Do not invent source-backed content or data; before treating requested source data as unavailable, inspect directly linked source pages/details that can contain the missing fields, not just index/list pages. When the requested source lacks data, represent it as unavailable/disabled instead of filling plausible values. For bug/performance fixes, first identify the behavior contract/invariant and every gate enforcing it, then replace them with equivalent safer/faster paths; do not stop at one symptom such as a warning, message, or output. Do not delete fallback, validation, recovery, compatibility, or safety behavior unless the user explicitly requests that removal or diagnostics prove it is unreachable and unnecessary.
+- Before changing numeric balance values, inspect adjacent same-role and same-category baselines and ensure the new ordering is intentional; do not tune values in isolation.
+- Follow explicit approaches; ask if unclear or risky. Investigate documented command failures before replacing commands. Do not bypass requested workflows or validation steps without explicit approval; fix the underlying issue or report the blocker.
+- When CI fails after an intentional behavior change, first check whether expectations/fixtures are stale; do not change implementation behavior to satisfy old tests unless the intended behavior is verified.
+- Verify facts with diagnostics before explaining corrections. For app/game controls, keybindings, or UI menu paths, inspect the relevant code/docs before giving an exact shortcut or menu sequence.
+- Do not manually edit generated files; change their sources and run the appropriate generator instead.
 - Before finalizing, review assistant changes for simpler, smaller, clearer code without reducing scope.
-- When writing issues, PRs, Markdown, docs, changelogs, release notes, or similar text, include direct related URLs/issues/PRs; search when relevant, and state if none are available.
+- For CSS state styling, avoid reusing generic class names across unrelated components; verify state classes do not match structural selectors elsewhere before declaring visual bugs fixed.
+- When writing issues, PRs, Markdown, docs, changelogs, release notes, or similar text, include direct related URLs/issues/PRs and search when relevant. If no related items are found, omit the related-links note instead of saying none were found.
 
 ## Validation
 
@@ -44,6 +50,8 @@
 - Fix validation failures on touched files before final summary.
 - Do not call failures pre-existing unless proven on the base branch.
 - For CI/release/platform/build changes, run matching local workflows when feasible or state unverified paths.
+- For visual layout fixes, validate the exact reported interaction and at least the reported/screenshot viewport plus adjacent common viewports before claiming scrollbar, overflow, alignment, or sizing behavior is fixed; inspect the captured result when screenshots are part of the complaint.
+- When validating source-tree-dependent behavior, use a binary or tool built from the target source/revision; do not substitute installed apps, Flatpaks, package-manager builds, or unrelated worktrees unless their revision is verified to match, and label the result as environmental if no matching binary is available.
 
 ## Completion
 
@@ -54,8 +62,8 @@
 
 ## Git
 
-- If tracked files change, commit assistant-made changes before final response unless commits are forbidden, the task is analysis-only, user changes are ambiguous, or validation fails.
-- Use atomic conventional commits and commit only assistant-made changes. Do not duplicate automation metadata such as `Assisted-by` trailers.
+- If tracked files change, commit assistant-made changes before final response unless commits are forbidden, the task is analysis-only, user changes are ambiguous, or validation fails from the assistant-made changes; if validation failure is proven unrelated or pre-existing, commit the scoped fix and report the unrelated blocker.
+- Use atomic conventional commits and commit only assistant-made changes. Preserve existing automation metadata such as `Assisted-by` trailers; do not add duplicate automation trailers. When a commit body is requested, use concise newline-separated bullets instead of a prose paragraph.
 - Before final response, verify tracked changes and either commit or state the exact skip reason.
 - Branch names: `{type}/{issue-number}/{issue-slug}` or `{type}/{slug}` from `upstream/main` if available, else `origin/main`.
 - For requested new worktrees, use `https://github.com/coderabbitai/git-worktree-runner`.
@@ -66,10 +74,12 @@
 ## GitHub and PRs
 
 - Use `gh`; do not comment unless requested.
+- When the user explicitly asks to open/create/update a PR, complete the PR action and obtain the PR URL before the final response unless blocked; if blocked, state the blocker and the exact command/result.
 - Read PR templates and existing PR bodies before editing; preserve human content, screenshots, artifacts, checklist state, related links, and prose.
 - Patch existing PR bodies minimally; save the current body first. Do not regenerate sections when a targeted patch is enough.
-- Before creating/updating PR bodies, run task-specific `gh search issues`/`gh search prs`, add discovered related links, and remove generic filler.
+- Before creating/updating PR bodies, run task-specific `gh search issues`/`gh search prs`, add discovered related links, and remove generic filler. Do not mention absent search results in the PR body.
 - If a PR resolves an issue, put `close #NUMBER` before any full URL references.
+- When opening PRs, be extremely terse: fill only required template fields with concrete bullets, omit optional filler, and keep summary/testing to the minimum needed.
 - Avoid redundant prose covered by templates/checklists. Keep PR bodies terse; do not fill optional fields with meaningless text.
 - When templates ask for testing/reviewer suggestions, include concrete steps and expected results beyond commands run.
 - Before PR titles, read changelog/title guidelines and make subjects player-facing when required.
@@ -77,6 +87,7 @@
 - If formatter setup is missing, configure the documented target-scoped workflow and rerun before PR updates.
 - For PRs from external reports, link the report and rerun timed-out validation with sufficient timeout before calling it unverified.
 - Update PR body/checklist after follow-up changes affecting implementation, compatibility, or validation.
+- When updating an existing PR body, keep the patch terse: replace stale cumulative bullets instead of appending repeated explanations, omit optional sections instead of filling them with `N/A`, and keep Testing to concise non-CI-redundant evidence.
 
 ## Coding conventions
 
