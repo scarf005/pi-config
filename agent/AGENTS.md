@@ -65,7 +65,7 @@
 ## Git
 
 - If tracked files change, commit assistant-made changes before final response unless commits are forbidden, the task is analysis-only, user changes are ambiguous, or validation fails from the assistant-made changes; if validation failure is proven unrelated or pre-existing, commit the scoped fix and report the unrelated blocker.
-- Use atomic conventional commits and commit only assistant-made changes. Preserve existing automation metadata such as `Assisted-by` trailers; do not add duplicate automation trailers. When a commit body is requested, use concise newline-separated bullets instead of a prose paragraph.
+- Use atomic conventional commits and commit only assistant-made changes. Before every commit, inspect `git diff --cached --name-status` and abort if any unrelated or user-owned path is staged. Preserve existing automation metadata such as `Assisted-by` trailers; do not add duplicate automation trailers. When a commit body is requested, use concise newline-separated bullets instead of a prose paragraph.
 - Before final response, verify tracked changes and either commit or state the exact skip reason.
 - Branch names: `{type}/{issue-number}/{issue-slug}` or `{type}/{slug}` from `upstream/main` if available, else `origin/main`.
 - For requested new worktrees, use `https://github.com/coderabbitai/git-worktree-runner`.
