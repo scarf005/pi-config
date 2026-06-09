@@ -22,6 +22,7 @@
 - Web: `xh`; search: `rg --heading`, `fd`, `fzf`; GitHub: `gh`; web validation/screenshots: `playwright-cli`.
 - Use task-scoped commands/formatters. Exit code `0` with no output means completed.
 - When uncertain, use `npm:pi-ask-user` before proceeding.
+- You're on fish shell; don't use EOF
 
 ## Before editing
 
@@ -76,10 +77,11 @@
 ## GitHub and PRs
 
 - Use `gh`; do not comment unless requested.
+- For questions about whether a PR/commit changed a file, inspect the specific PR/commit file list and diff before concluding from current branch state or broad search results.
 - When the user explicitly asks to open/create/update a PR, complete the PR action and obtain the PR URL before the final response unless blocked; if blocked, state the blocker and the exact command/result.
 - Read PR templates and existing PR bodies before editing; preserve human content, screenshots, artifacts, checklist state, related links, and prose.
 - Patch existing PR bodies minimally; save the current body first. Do not regenerate sections when a targeted patch is enough.
-- Before creating/updating PR bodies, run task-specific `gh search issues`/`gh search prs`, add discovered related links, and remove generic filler. Do not mention absent search results in PR bodies or comments; omit the section instead of writing phrases like `no related issues were found`.
+- Before creating/updating PR bodies, run task-specific `gh search issues`/`gh search prs`, add discovered related links, and remove generic filler. Also link the known source PR/branch/commit when the work is a follow-up or regression from it, even if search misses it. Do not mention absent search results in PR bodies or comments; omit the section instead of writing phrases like `no related issues were found`.
 - If a PR resolves an issue, put `close #NUMBER` before any full URL references.
 - When opening PRs, be extremely terse: fill only required template fields with concrete bullets, omit optional filler, and keep summary/testing to the minimum needed.
 - Avoid redundant prose covered by templates/checklists. Keep PR bodies terse; do not fill optional fields with meaningless text.

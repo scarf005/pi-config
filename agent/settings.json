@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.75.5",
+  "lastChangelogVersion": "0.78.1",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
   "hideThinkingBlock": false,
@@ -16,6 +16,8 @@
     "../../../repo/assisted-by",
     "npm:pi-ask-user",
     "../../../repo/etc/one-time-contribution/dot314/extensions/move-session.ts",
-    "npm:pi-subagents"
+    "npm:pi-subagents",
+    "npm:pi-web-access",
+    "npm:pi-simplify"
   ]
 }
