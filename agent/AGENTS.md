@@ -43,7 +43,7 @@
 - Before finalizing, review assistant changes for simpler, smaller, clearer code without reducing scope.
 - For CSS state styling, avoid reusing generic class names across unrelated components; verify state classes do not match structural selectors elsewhere before declaring visual bugs fixed.
 - When writing issues, PRs, Markdown, docs, changelogs, release notes, or similar text, include direct related URLs/issues/PRs and search when relevant. If no related items are found, omit the related-links note instead of saying none were found.
-- When writing any Markdown, docs, issues, PRs, release notes, skills, or similar prose, keep it terse: include only actionable or user-relevant content, link or invoke source configs/tools instead of copying their contents, and delete obvious metadata or statistics. Do not include research/process provenance in the deliverable unless the user asked for it; use requested references as inputs, not self-reporting content.
+- When writing any Markdown, docs, issues, PRs, release notes, skills, or similar prose, keep it terse: include only actionable or user-relevant content, link or invoke source configs/tools instead of copying their contents, and delete obvious metadata or statistics. Do not include research/process provenance in the deliverable unless the user asked for it; use requested references as inputs, not self-reporting content. For prose/style tasks, run the final text through the loaded style rules as the deliverable, not just as background reading.
 
 ## Validation
 
