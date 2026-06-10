@@ -21,6 +21,7 @@
 
 - Web: `xh`; search: `rg --heading`, `fd`, `fzf`; GitHub: `gh`; web validation/screenshots: `playwright-cli`.
 - Use task-scoped commands/formatters. Exit code `0` with no output means completed.
+- When adding repository automation scripts in a project with Deno/TypeScript tooling, use Deno/TypeScript and the `deno-script` skill unless the user explicitly requests another language.
 - When uncertain, use `npm:pi-ask-user` before proceeding.
 - You're on fish shell; don't use EOF
 
