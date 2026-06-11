@@ -83,7 +83,7 @@
 - Read PR templates and existing PR bodies before editing; preserve human content, screenshots, artifacts, checklist state, related links, and prose.
 - Patch existing PR bodies minimally; save the current body first. Do not regenerate sections when a targeted patch is enough.
 - Before creating/updating PR bodies, run task-specific `gh search issues`/`gh search prs`, add discovered related links, and remove generic filler. Also link the known source PR/branch/commit when the work is a follow-up or regression from it, even if search misses it. Do not mention absent search results in PR bodies or comments; omit the section instead of writing phrases like `no related issues were found`.
-- If a PR resolves an issue, put `close #NUMBER` before any full URL references.
+- If a PR resolves an issue, put `close #NUMBER` before any full URL references; if the issue is an umbrella with open subissues that the PR should resolve, include closing keywords for those open subissues too because closing a parent issue does not close subissues.
 - When opening PRs, be extremely terse: fill only required template fields with concrete bullets, omit optional filler, and keep summary/testing to the minimum needed.
 - Avoid redundant prose covered by templates/checklists. Keep PR bodies terse; do not fill optional fields with meaningless text.
 - When templates ask for testing/reviewer suggestions, include concrete steps and expected results beyond commands run.
