@@ -20,10 +20,13 @@
 ## Tools
 
 - Web: `xh`; search: `rg --heading`, `fd`, `fzf`; GitHub: `gh`; web validation/screenshots: `playwright-cli`.
+- Redact credentials and action tokens before printing command output, especially local service/cache API responses, config files, headers, URLs, and notification action payloads.
 - Use task-scoped commands/formatters. Exit code `0` with no output means completed.
+- For preset/profile-driven tools such as CMake presets, package-manager scripts, and CI jobs, treat the preset/profile as the contract: invoke it directly, use fresh/reconfigure options for stale state, and validate observable outputs instead of duplicating its cache variables/options in wrapper logic.
 - When adding repository automation scripts in a project with Deno/TypeScript tooling, use Deno/TypeScript and the `deno-script` skill unless the user explicitly requests another language.
 - When uncertain, use `npm:pi-ask-user` before proceeding.
-- You're on fish shell; don't use EOF
+- When the user explicitly asks to use subagents, delegate substantive planning or implementation to subagents before doing direct implementation work.
+- You're on fish shell; avoid Bash-only syntax (`$'...'`, heredocs/EOF). For multi-line GitHub bodies, use `--body-file` with a temp file or stdin instead of inline quoting.
 
 ## Before editing
 
@@ -35,7 +38,7 @@
 
 ## Implementation
 
-- Do not reduce or broaden requested scope without approval. If the user names a specific entity/case, do not apply the change to related entities unless explicitly requested; if the user says all fields/items in a data category, enumerate matching loaders/keys/files before editing and treat omissions as blockers. Preserve requested behavior, content, comments, libraries, frameworks, and platform support unless removal is requested. Do not invent source-backed content or data; before treating requested source data as unavailable, inspect directly linked source pages/details that can contain the missing fields, not just index/list pages. When the requested source lacks data, represent it as unavailable/disabled instead of filling plausible values. For bug/performance fixes, first identify the behavior contract/invariant and every gate enforcing it, then replace them with equivalent safer/faster paths; do not stop at one symptom such as a warning, message, or output. Do not delete fallback, validation, recovery, compatibility, or safety behavior unless the user explicitly requests that removal or diagnostics prove it is unreachable and unnecessary.
+- Do not reduce or broaden requested scope without approval. If the user names a specific entity/case, do not apply the change to related entities unless explicitly requested; if the user says all fields/items in a data category, enumerate matching loaders/keys/files before editing and treat omissions as blockers. Preserve requested behavior, content, comments, libraries, frameworks, and platform support unless removal is requested. When proxying, caching, downloading, or mirroring media, preserve the exact visible asset role/crop/source intent; do not substitute thumbnails, portraits, banners, or full-body images for each other. Do not invent source-backed content or data; before treating requested source data as unavailable, inspect directly linked source pages/details that can contain the missing fields, not just index/list pages. When the requested source lacks data, represent it as unavailable/disabled instead of filling plausible values. For bug/performance fixes, first identify the behavior contract/invariant and every gate enforcing it, then replace them with equivalent safer/faster paths; do not stop at one symptom such as a warning, message, or output. Do not delete fallback, validation, recovery, compatibility, or safety behavior unless the user explicitly requests that removal or diagnostics prove it is unreachable and unnecessary.
 - Before changing numeric balance values, inspect adjacent same-role and same-category baselines and ensure the new ordering is intentional; do not tune values in isolation.
 - Follow explicit approaches; ask if unclear or risky. Prefer the correct maintainable structure over the smallest diff; do not choose a worse location, API, or architecture solely to minimize change size. Investigate documented command failures before replacing commands. Do not bypass requested workflows or validation steps without explicit approval; fix the underlying issue or report the blocker.
 - When CI fails after an intentional behavior change, first check whether expectations/fixtures are stale; do not change implementation behavior to satisfy old tests unless the intended behavior is verified.
@@ -44,7 +47,7 @@
 - Before finalizing, review assistant changes for simpler, smaller, clearer code without reducing scope.
 - For CSS state styling, avoid reusing generic class names across unrelated components; verify state classes do not match structural selectors elsewhere before declaring visual bugs fixed.
 - When writing issues, PRs, Markdown, docs, changelogs, release notes, or similar text, include direct related URLs/issues/PRs and search when relevant. If no related items are found, omit the related-links note instead of saying none were found.
-- When writing any Markdown, docs, issues, PRs, release notes, skills, or similar prose, keep it terse: include only actionable or user-relevant content, link or invoke source configs/tools instead of copying their contents, and delete obvious metadata or statistics unless the change is justified by measured performance or the user requested benchmarks. For performance PRs or benchmark-requested work, include a concise before/after result table in the PR body. Do not include research/process provenance in the deliverable unless the user asked for it; use requested references as inputs, not self-reporting content. For player-facing docs, omit developer provenance, fork history, implementation history, and contributor workflow unless the user asked for it; lead with visible gameplay consequences. For prose/style tasks, run the final text through the loaded style rules as the deliverable, not just as background reading.
+- When writing any Markdown, docs, issues, PRs, release notes, skills, or similar prose, keep it terse: include only actionable or user-relevant content, link or invoke source configs/tools instead of copying their contents, and delete obvious metadata or statistics unless the change is justified by measured performance or the user requested benchmarks. For bug reports, lead with the concrete symptom and related link, then repro, environment, and logs/backtrace; do not add template filler, speculative diagnosis, or AI-polished framing. For performance PRs or benchmark-requested work, include a concise before/after result table in the PR body. Do not include research/process provenance in the deliverable unless the user asked for it; use requested references as inputs, not self-reporting content. For player-facing docs, omit developer provenance, fork history, implementation history, and contributor workflow unless the user asked for it; lead with visible gameplay consequences. For prose/style tasks, run the final text through the loaded style rules as the deliverable, not just as background reading.
 
 ## Validation
 
@@ -60,20 +63,23 @@
 ## Completion
 
 - After each task, run `~/.local/bin/notify --id "$PWD" "{{Korean title}}" "{{Korean summary with actual conclusion/result/answer}}"`; add `--click "$URL"` for important URLs. Title should answer tersely; body must state the result directly without meta phrases.
+- For live-site fixes, do not say the live URL is fixed until the commit is pushed and the deployment is verified; if only local validation passed, state that explicitly.
 - After a major mistake, stop, identify the repeated failure mode, and update the relevant `AGENTS.md` only if existing rules cannot cover it.
+- AGENTS updates are only for concrete procedural/policy gaps that a normal agent would likely repeat without a rule; do not add rules for ordinary judgment errors, conversation-quality failures, common sense, one-off mistakes, or behavior already covered by existing rules. For those, immediately correct the action and return to the task.
 - AGENTS updates must prevent the mistake class by editing existing rules where possible; avoid incident-specific, tool-specific, or blame-shifting rules.
 - For conduct/instruction mistakes, update global `AGENTS.md`; repo `AGENTS.md` files should stay repo-specific.
 
 ## Git
 
 - If tracked files change, commit assistant-made changes before final response unless commits are forbidden, the task is analysis-only, user changes are ambiguous, or validation fails from the assistant-made changes; if validation failure is proven unrelated or pre-existing, commit the scoped fix and report the unrelated blocker.
-- Use atomic conventional commits and commit only assistant-made changes. Before every commit, inspect `git diff --cached --name-status` and abort if any unrelated or user-owned path is staged. Preserve existing automation metadata such as `Assisted-by` trailers; do not add duplicate automation trailers. When a commit body is requested, use concise newline-separated bullets instead of a prose paragraph.
+- Use atomic conventional commits and commit only assistant-made changes. Split independent concerns into separate commits, such as UI/content, runtime/build plumbing, CI/deploy automation, docs, and tests; do not collapse broad multi-part work into one commit merely because it is one deployable feature. Before every commit, inspect `git diff --cached --name-status` and abort if any unrelated or user-owned path is staged. Preserve existing automation metadata such as `Assisted-by` trailers; do not add duplicate automation trailers. When a commit body is requested, use concise newline-separated bullets instead of a prose paragraph.
 - Before final response, verify tracked changes and either commit or state the exact skip reason.
 - Branch names: `{type}/{issue-number}/{issue-slug}` or `{type}/{slug}` from `upstream/main` if available, else `origin/main`.
 - For requested new worktrees, use `https://github.com/coderabbitai/git-worktree-runner`.
 - Never run discard-style commands on tracked files unless explicitly asked for those exact files.
 - Treat unstaged tracked changes as user-owned unless proven otherwise.
 - Before amend/force-push, verify `HEAD` and inspect `git diff --cached --name-status`.
+- After opening a PR, do not push follow-up commits or force-push unless the user explicitly asks to update the remote branch; keep local changes unpushed and report them.
 
 ## GitHub and PRs
 
@@ -92,6 +98,7 @@
 - When asked to attach screenshots or recordings to a PR, use GitHub-hosted attachments or existing external artifact URLs in the PR body/comment; never add media files to the repository unless the user explicitly asks to commit those assets.
 - If formatter setup is missing, configure the documented target-scoped workflow and rerun before PR updates.
 - For PRs from external reports, link the report and rerun timed-out validation with sufficient timeout before calling it unverified.
+- For CI permission/auth failures, compare the same workflow step on recent comparable PRs before calling the failure PR-specific.
 - Update PR body/checklist after follow-up changes affecting implementation, compatibility, or validation.
 - When updating an existing PR body, keep the patch terse: replace stale cumulative bullets instead of appending repeated explanations, omit optional sections instead of filling them with `N/A`, and keep Testing to concise non-CI-redundant evidence.
 
