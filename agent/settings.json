@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.78.1",
+  "lastChangelogVersion": "0.79.4",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
   "hideThinkingBlock": false,
@@ -18,6 +18,9 @@
     "../../../repo/etc/one-time-contribution/dot314/extensions/move-session.ts",
     "npm:pi-subagents",
     "npm:pi-web-access",
-    "npm:pi-simplify"
-  ]
+    "npm:pi-simplify",
+    "../../../repo/assisted-by/packages/gh-title-body-guard"
+  ],
+  "defaultProjectTrust": "always",
+  "theme": "dark"
 }
