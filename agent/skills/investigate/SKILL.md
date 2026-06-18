@@ -32,7 +32,8 @@ Use this skill for read-only diagnosis and solution exploration. It is a plannin
 3. **Find related work**
    - Search the local repo history, issues, PR references, docs, changelog, and tests for related behavior.
    - If the repo is on GitHub and network/auth is available, use `gh search issues` and `gh search prs` or equivalent targeted searches.
-   - Include direct related URLs only when found; omit a related-links section if none are found.
+   - Track the exact related issue/PR queries or local searches performed.
+   - Investigation final responses MUST always state related issue/PR status: list direct URLs when found, or state that no related issues/PRs were found in the searched scope and name the searched scope/queries.
 
 4. **Diagnose with evidence**
    - Separate confirmed facts from hypotheses.
@@ -52,7 +53,7 @@ Use this skill for read-only diagnosis and solution exploration. It is a plannin
 ## Final Response Shape
 
 - Lead with the direct finding or current best answer.
-- Include related issues/PRs only if discovered.
+- Always include a concise `Related issues/PRs` item for investigation results, even when none were found; include direct URLs for found items and the searched scope/queries for empty results.
 - Include fix options with pros and cons.
 - State what was not verified or what evidence is still missing.
 - Do not claim anything is fixed unless the user authorized implementation and validation was completed.
