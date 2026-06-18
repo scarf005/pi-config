@@ -16,12 +16,13 @@ Use this skill for read-only diagnosis and solution exploration. It is a plannin
 
 ## Workflow
 
-1. **Quick answer first**
-   - Send a desktop notification early with the current concise answer or investigation direction:
+1. **Notify only when cause is found**
+   - Do not send start/progress notifications such as "will start investigating" or "조사 시작".
+   - Send a desktop notification only after the actual cause/root cause is identified with evidence:
      ```bash
-     ~/.local/bin/notify --id "$PWD" "조사 시작" "현재 판단과 다음 확인 대상을 한 문장으로 알립니다"
+     ~/.local/bin/notify --id "$PWD" "원인 확인" "증거로 확인한 실제 원인을 한 문장으로 알립니다"
      ```
-   - Keep this notification brief; do not wait for exhaustive research.
+   - If the cause is not found, do not send an investigate-skill notification.
 
 2. **Establish context**
    - Identify the repo/root and applicable instructions.
