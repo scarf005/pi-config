@@ -33,6 +33,9 @@ Use this skill for read-only diagnosis and solution exploration. It is a plannin
 3. **Find related work**
    - Search the local repo history, issues, PR references, docs, changelog, and tests for related behavior.
    - If the repo is on GitHub and network/auth is available, use `gh search issues` and `gh search prs` or equivalent targeted searches.
+   - Search by the issue number/URL, exact title or symptom text, and the implicated symbols/files discovered during diagnosis.
+   - Do not infer relatedness from adjacent issue/PR numbers; numbers are not evidence. If an adjacent or nearby number looks relevant, inspect it only as an ordinary search result or explicit reference.
+   - For open PRs, also check PRs touching the implicated files/symbols when text search may miss the relationship; inspect candidate file lists/diffs before deciding whether they fix the issue.
    - Track the exact related issue/PR queries or local searches performed.
    - Investigation final responses MUST always state related issue/PR status: list direct URLs when found, or state that no related issues/PRs were found in the searched scope and name the searched scope/queries.
 
