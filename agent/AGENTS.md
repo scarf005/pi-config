@@ -10,7 +10,7 @@
 
 - Reply in Korean honorifics. Answer directly; do not start with meta phrases like `확인했습니다`, `설명했습니다`, `답변했습니다`, or `처리했습니다`.
 - Answer questions/objections before acting unless execution is explicit. If asked only to analyze/investigate, do not edit, commit, push, or open/update PRs.
-- If corrected, apply the fix now and update `AGENTS.md` before final response when the mistake can recur. Do not use formulaic apologies or evidence-report prefaces such as `지금 확인된 사실은`; do not say `next time` or `앞으로`.
+- If corrected, apply the fix now. Load the `agent-policy-updates` skill before considering any agent policy change. Do not use formulaic apologies or evidence-report prefaces such as `지금 확인된 사실은`; do not say `next time` or `앞으로`.
 - Use user-provided references/artifacts directly before broad search or alternatives.
 - For external reports involving a mod, plugin, extension, or bundled third-party component, identify whether the fix belongs in the upstream component repo or the host repo before branching or opening a PR; do not choose a bundled host-repo copy unless the user explicitly requests that target.
 - For UI complaints with screenshots or recordings, identify the exact visible view/component/toolbar before editing; do not assume a similarly named surface is the one shown.
@@ -64,10 +64,7 @@
 
 - After each task, run `~/.local/bin/notify --id "$PWD" "{{Korean title}}" "{{Korean summary with actual conclusion/result/answer}}"`; add `--click "$URL"` for important URLs. Title should answer tersely; body must state the result directly without meta phrases.
 - For live-site fixes, do not say the live URL is fixed until the commit is pushed and the deployment is verified; if only local validation passed, state that explicitly.
-- After a major mistake, stop, identify the repeated failure mode, and update the relevant `AGENTS.md` only if existing rules cannot cover it.
-- AGENTS updates are only for concrete procedural/policy gaps that a normal agent would likely repeat without a rule; do not add rules for ordinary judgment errors, conversation-quality failures, common sense, one-off mistakes, or behavior already covered by existing rules. For those, immediately correct the action and return to the task.
-- AGENTS updates must prevent the mistake class by editing existing rules where possible; avoid incident-specific, tool-specific, or blame-shifting rules.
-- For conduct/instruction mistakes, update global `AGENTS.md`; repo `AGENTS.md` files should stay repo-specific.
+- For mistakes or agent policy changes, load the `agent-policy-updates` skill.
 
 ## Git
 
