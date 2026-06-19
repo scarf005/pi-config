@@ -97,6 +97,7 @@
 - When asked to attach screenshots or recordings to a PR, use GitHub-hosted attachments or existing external artifact URLs in the PR body/comment; never add media files to the repository unless the user explicitly asks to commit those assets.
 - If formatter setup is missing, configure the documented target-scoped workflow and rerun before PR updates.
 - For PRs from external reports, link the report and rerun timed-out validation with sufficient timeout before calling it unverified.
+- When watching Cataclysm-BN PR checks, poll at a 3-minute interval, e.g. `gh pr checks --watch --interval 180`, unless actively inspecting a failing job.
 - For CI permission/auth failures, compare the same workflow step on recent comparable PRs before calling the failure PR-specific.
 - Update PR body/checklist after follow-up changes affecting implementation, compatibility, or validation.
 - When updating an existing PR body, keep the patch terse: replace stale cumulative bullets instead of appending repeated explanations, omit optional sections instead of filling them with `N/A`, and keep Testing to concise non-CI-redundant evidence.
