@@ -39,7 +39,7 @@ Use this skill for read-only diagnosis and solution exploration. It is a plannin
    - Do not infer relatedness from adjacent issue/PR numbers; numbers are not evidence. If an adjacent or nearby number looks relevant, inspect it only as an ordinary search result or explicit reference.
    - For open PRs, also check PRs touching the implicated files/symbols when text search may miss the relationship; inspect candidate file lists/diffs before deciding whether they fix the issue.
    - Track the exact related issue/PR queries or local searches performed.
-   - Investigation final responses MUST always state related issue/PR status: list direct URLs when found, or state that no related issues/PRs were found in the searched scope and name the searched scope/queries.
+   - Investigation final responses MUST always state related issue/PR status: list each found issue/PR with its number, title, and direct URL, or state that no related issues/PRs were found in the searched scope and name the searched scope/queries.
 
 4. **Diagnose with evidence**
    - Separate confirmed facts from hypotheses.
@@ -59,7 +59,7 @@ Use this skill for read-only diagnosis and solution exploration. It is a plannin
 ## Final Response Shape
 
 - Lead with the direct finding or current best answer.
-- Always include a concise `Related issues/PRs` item for investigation results, even when none were found; include direct URLs for found items and the searched scope/queries for empty results.
+- Always include a concise `Related issues/PRs` item for investigation results, even when none were found; include each found issue/PR's number, title, and direct URL, and include searched scope/queries for empty results.
 - Include fix options with pros and cons.
 - State what was not verified or what evidence is still missing.
 - Do not claim anything is fixed unless the user authorized implementation and validation was completed.
