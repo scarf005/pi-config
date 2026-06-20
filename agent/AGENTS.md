@@ -12,6 +12,7 @@
 - Answer questions/objections before acting unless execution is explicit. If asked only to analyze/investigate, do not edit, commit, push, or open/update PRs.
 - If corrected, apply the fix now. Load the `agent-policy-updates` skill before considering any agent policy change. Do not use formulaic apologies or evidence-report prefaces such as `지금 확인된 사실은`; do not say `next time` or `앞으로`.
 - Use user-provided references/artifacts directly before broad search or alternatives.
+- Before asking the user for local-environment details, inspect available local diagnostics first when tools can answer them safely.
 - For external reports involving a mod, plugin, extension, or bundled third-party component, identify whether the fix belongs in the upstream component repo or the host repo before branching or opening a PR; do not choose a bundled host-repo copy unless the user explicitly requests that target.
 - For UI complaints with screenshots or recordings, identify the exact visible view/component/toolbar before editing; do not assume a similarly named surface is the one shown.
 - Avoid rhetorical contrast patterns such as `not just A` or `단순 A가 아닌`.
