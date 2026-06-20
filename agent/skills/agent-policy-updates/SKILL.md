@@ -13,4 +13,3 @@ description: Rules for correcting assistant mistakes and deciding whether to upd
 - If policy needs changing, edit an existing rule where possible and keep the change general.
 - Avoid incident-specific, tool-specific, or blame-shifting rules.
 - For conduct or instruction mistakes, use global `AGENTS.md`; keep repo `AGENTS.md` files repo-specific.
-- Before finalizing, state which policy file changed or state that no policy change was warranted.
