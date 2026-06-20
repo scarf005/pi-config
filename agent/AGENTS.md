@@ -58,6 +58,7 @@
 - Do not call failures pre-existing unless proven on the base branch.
 - For CI/release/platform/build changes, run matching local workflows when feasible or state unverified paths.
 - For visual layout fixes, validate the exact reported interaction and at least the reported/screenshot viewport plus adjacent common viewports before claiming scrollbar, overflow, alignment, or sizing behavior is fixed; inspect the captured result when screenshots are part of the complaint.
+- For data/content/live-site fixes, validate the exact user-reported record, field, asset, and UI state; broad string presence, successful builds, or deploy status are insufficient. For images/media, verify the final served asset identity with MIME/dimensions or an inspected render, not only the filename or URL.
 - When validating source-tree-dependent behavior, use a binary or tool built from the target source/revision; do not substitute installed apps, Flatpaks, package-manager builds, or unrelated worktrees unless their revision is verified to match, and label the result as environmental if no matching binary is available.
 
 ## Completion
