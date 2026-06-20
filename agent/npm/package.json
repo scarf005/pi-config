@@ -6,7 +6,7 @@
     "@alexanderfortin/pi-token-usage": "^0.3.0",
     "pi-ask-user": "^0.11.2",
     "pi-simplify": "^0.2.2",
-    "pi-subagents": "^0.28.0",
+    "pi-subagents": "^0.29.0",
     "pi-web-access": "^0.10.7"
   }
 }
