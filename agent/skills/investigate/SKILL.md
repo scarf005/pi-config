@@ -35,7 +35,7 @@ Use this skill for read-only diagnosis and solution exploration. It is a plannin
    - If the repo is on GitHub and network/auth is available, use `gh search issues` and `gh search prs` or equivalent targeted searches.
    - Search by the issue number/URL, exact title or symptom text, and the implicated symbols/files discovered during diagnosis.
    - Check whether an existing open or merged PR already fixes the reported issue before proposing new implementation work; inspect candidate PR file lists/diffs rather than relying on titles.
-   - For bugs, identify the likely introducing PR or commit with local history, blame, and related PR searches when the evidence is available; state the confidence level and evidence.
+   - For bugs, actively attempt to identify the likely introducing commit and PR before finalizing: inspect blame/log/diffs around implicated code, search PRs by commit/title/files/symbols, and use focused bisect-style checks when feasible. If a culprit cannot be identified, state the exact blocker and confidence level.
    - Do not infer relatedness from adjacent issue/PR numbers; numbers are not evidence. If an adjacent or nearby number looks relevant, inspect it only as an ordinary search result or explicit reference.
    - For open PRs, also check PRs touching the implicated files/symbols when text search may miss the relationship; inspect candidate file lists/diffs before deciding whether they fix the issue.
    - Track the exact related issue/PR queries or local searches performed.
