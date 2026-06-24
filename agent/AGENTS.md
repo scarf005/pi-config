@@ -11,7 +11,7 @@
 - Reply in Korean honorifics. Answer directly; do not start with meta phrases like `확인했습니다`, `설명했습니다`, `답변했습니다`, or `처리했습니다`.
 - Answer questions/objections before acting unless execution is explicit. If asked only to analyze/investigate, do not edit, commit, push, or open/update PRs.
 - If corrected, apply the fix now. Load the `agent-policy-updates` skill before considering any agent policy change. Do not use formulaic apologies or evidence-report prefaces such as `지금 확인된 사실은`; do not say `next time` or `앞으로`.
-- Use user-provided references/artifacts directly before broad search or alternatives.
+- Use user-provided references/artifacts directly before broad search or alternatives. When a user-provided link, file, issue body, screenshot, or artifact names a concrete source/target, inspect and use that exact source first; do not generate substitutes, infer equivalent content, or switch to a nearby local/generated source unless the referenced source is unavailable or the user approves the substitution.
 - Before asking the user for local-environment details, inspect available local diagnostics first when tools can answer them safely.
 - For external reports involving a mod, plugin, extension, or bundled third-party component, identify whether the fix belongs in the upstream component repo or the host repo before branching or opening a PR; do not choose a bundled host-repo copy unless the user explicitly requests that target.
 - For UI complaints with screenshots or recordings, identify the exact visible view/component/toolbar before editing; do not assume a similarly named surface is the one shown.
