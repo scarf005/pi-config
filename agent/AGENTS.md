@@ -64,6 +64,7 @@
 
 ## Completion
 
+- After assistant-made file changes and before final response, run an extremely hostile/adversarial reviewer subagent in fresh context against the actual diff. Treat correctness, regression, missing-test, and scope findings as blocking until fixed or explicitly reported as unresolved; skip only when subagents are unavailable or there is no project/source diff.
 - After each task, run `~/.local/bin/notify --id "$PWD" "{{Korean title}}" "{{Korean summary with actual conclusion/result/answer}}"`; add `--click "$URL"` for important URLs. Title should answer tersely; body must state the result directly without meta phrases.
 - For live-site fixes, do not say the live URL is fixed until the commit is pushed and the deployment is verified; if only local validation passed, state that explicitly.
 - For mistakes or agent policy changes, load the `agent-policy-updates` skill.
