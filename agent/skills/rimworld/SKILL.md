@@ -20,3 +20,16 @@ description: RimWorld mod C# conventions, keyed localization, and build validati
    ```
 3. Do not change the global mise default merely because bare `dotnet` reports that no shim version is set.
 4. Verify zero build errors and inspect the project-defined output path for the expected mod DLL.
+
+## First-party mod justfile
+
+- Every mod authored in its own repository must include a tracked root `justfile`. Once present, treat its recipes as the project contract instead of invoking their underlying commands separately.
+- Provide these public recipes:
+  - `just build`: compile the mod and produce every runtime assembly in its project-defined version directory.
+  - `just install`: depend on `build`, then synchronize the complete runtime mod tree into a dedicated directory under the local RimWorld `Mods` directory. Exclude repository and development-only files, and constrain deletion to that dedicated destination.
+  - `just install-enable`: depend on `install`, then idempotently add the `packageId` from `About/About.xml` to `activeMods` in `ModsConfig.xml`. Preserve every existing entry and its order, never add a duplicate, and leave valid XML.
+- Make local paths environment-overridable and use these defaults on this machine:
+  - RimWorld: `/media/scarf/@steam/SteamLibrary/steamapps/common/RimWorld`
+  - Config: `/home/scarf/.config/unity3d/Ludeon Studios/RimWorld by Ludeon Studios/Config/ModsConfig.xml`
+- Do not edit `ModsConfig.xml` while RimWorld is running because the game can overwrite it on exit.
+- Validate a new justfile with `just --list` and `just build`. Run `just install` or `just install-enable` only when the task explicitly requests the corresponding local state change.
