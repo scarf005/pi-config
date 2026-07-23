@@ -33,8 +33,9 @@ description: RimWorld mod C# and F# conventions, keyed localization, dependency 
    mise exec dotnet@8.0.422 -- dotnet build <path-to-project-file> -c Release
    ```
 3. Do not change the global mise default merely because bare `dotnet` reports that no shim version is set.
-4. Verify zero build errors and inspect the project-defined output path for the expected mod DLL.
-5. Do not copy or overwrite build artifacts (such as DLLs) in the Steam Workshop directory (`steamapps/workshop/content/...`). This directory is managed automatically by Steam. Mod installation, local testing, and debugging must only target the local RimWorld `Mods` directory (`steamapps/common/RimWorld/Mods/...`) or user-managed directories.
+4. Verify zero build errors and inspect the project-defined output path for the expected mod DLL. If the build fails, stop before installation and report the blocker.
+5. Install only the exact DLL produced by the verified target-source build. Never patch, rewrite, decompile/recompile, or substitute a DLL to bypass a source build failure, including in a local test mod.
+6. Do not copy or overwrite build artifacts (such as DLLs) in the Steam Workshop directory (`steamapps/workshop/content/...`). This directory is managed automatically by Steam. Mod installation, local testing, and debugging must only target the local RimWorld `Mods` directory (`steamapps/common/RimWorld/Mods/...`) or user-managed directories.
 
 ## First-party mod justfile
 
