@@ -34,6 +34,7 @@ description: RimWorld mod C# and F# conventions, keyed localization, dependency 
    ```
 3. Do not change the global mise default merely because bare `dotnet` reports that no shim version is set.
 4. Verify zero build errors and inspect the project-defined output path for the expected mod DLL.
+5. Do not copy or overwrite build artifacts (such as DLLs) in the Steam Workshop directory (`steamapps/workshop/content/...`). This directory is managed automatically by Steam. Mod installation, local testing, and debugging must only target the local RimWorld `Mods` directory (`steamapps/common/RimWorld/Mods/...`) or user-managed directories.
 
 ## First-party mod justfile
 
@@ -42,7 +43,7 @@ description: RimWorld mod C# and F# conventions, keyed localization, dependency 
   - `just fmt`: format all source using tracked configuration—K&R via `dotnet format` for C#, or a repository-pinned Fantomas tool for F#.
   - `just build`: compile the mod and produce every runtime assembly in its project-defined version directory.
   - `just install`: depend on `build`, then synchronize the complete runtime mod tree into a dedicated directory under the local RimWorld `Mods` directory. Exclude repository and development-only files, and constrain deletion to that dedicated destination.
-  - `just install-enable`: depend on `install`, then idempotently add the `packageId` from `About/About.xml` to `activeMods` in `ModsConfig.xml`. Preserve every existing entry and its order, never add a duplicate, and leave valid XML.
+  - `just enable`: depend on `install`, then idempotently add the `packageId` from `About/About.xml` to `activeMods` in `ModsConfig.xml`. Preserve every existing entry and its order, never add a duplicate, and leave valid XML.
 - Make local paths environment-overridable and use these defaults on this machine:
   - RimWorld: `/media/scarf/@steam/SteamLibrary/steamapps/common/RimWorld`
   - Config: `/home/scarf/.config/unity3d/Ludeon Studios/RimWorld by Ludeon Studios/Config/ModsConfig.xml`
