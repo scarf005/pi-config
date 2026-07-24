@@ -45,6 +45,57 @@ description: RimWorld mod C# and F# conventions, keyed localization, dependency 
 5. Install only the exact DLL produced by the verified target-source build. Never patch, rewrite, decompile/recompile, or substitute a DLL to bypass a source build failure, including in a local test mod.
 6. Do not copy or overwrite build artifacts (such as DLLs) in the Steam Workshop directory (`steamapps/workshop/content/...`). This directory is managed automatically by Steam. Mod installation, local testing, and debugging must only target the local RimWorld `Mods` directory (`steamapps/common/RimWorld/Mods/...`) or user-managed directories. A running game does not prohibit copying a verified build into a local mod; it continues using its already loaded DLL until restart. Do not require exit merely to install that DLL.
 
+## Local runtime paths
+
+- RimWorld install: `/media/scarf/@steam/SteamLibrary/steamapps/common/RimWorld`
+- Mods directory: `/media/scarf/@steam/SteamLibrary/steamapps/common/RimWorld/Mods`
+- Player log: `/home/scarf/.config/unity3d/Ludeon Studios/RimWorld by Ludeon Studios/Player.log`
+- Mods config: `/home/scarf/.config/unity3d/Ludeon Studios/RimWorld by Ludeon Studios/Config/ModsConfig.xml`
+- Prefs (language, resolution): `/home/scarf/.config/unity3d/Ludeon Studios/RimWorld by Ludeon Studios/Config/Prefs.xml`
+- CE Steam Workshop: `/media/scarf/@steam/SteamLibrary/steamapps/workshop/content/294100/2890901044`
+- RimWorld 1.6 reference decompile: `/home/scarf/repo/rw/RimworldDecompile`
+
+## Translations (DefInjected)
+
+- Folder: `Languages/[langFolderName]/DefInjected/[DefType]/` where `langFolderName` must match `Prefs.xml` `<langFolderName>` EXACTLY, including parentheses. Korean: `Languages/Korean (한국어)/DefInjected/`.
+- Subdirectories named by Def type with trailing 's' (`DamageDefs`, `HediffDefs`, `ThingDefs`). RimWorld strips trailing 's' if exact type match fails, then retries.
+- Key format: `<defName.fieldName>translated text</defName.fieldName>` (e.g. `<CEOP_Barotrauma.label>기압손상</CEOP_Barotrauma.label>`)
+- For custom Def types in custom namespaces, use the def type's full name as the folder (e.g. `CombatExtended.AmmoCategoryDef/`). Standard Verse defs use bare type names.
+- Translation files are simple key-value XML; `LoadFolders.xml` does not need a Languages entry.
+
+## CE-specific APIs
+
+- `GenExplosionCE.DoExplosion` is a standalone static method (not an override of `GenExplosion`). Patch with `[<HarmonyPatch(typeof<GenExplosionCE>, nameof GenExplosionCE.DoExplosion)>]`.
+- CE explosion armor penetration: `GetExplosionArmorPenetration()` = `damageAmountBase * ExplosiveArmorPenetrationMultiplier` where multiplier = 0.4f. This is blunt penetration in MPa.
+- CE explosion damage may be scaled by the firing weapon's `RangedWeapon_DamageMultiplier` stat. Radius comes from XML `explosionRadius` unscaled.
+- Thermobaric detection: check `DamageDef.isExplosive && typeof<DamageWorker_Flame>.IsAssignableFrom(damageDef.workerClass)`. CE's `Thermobaric` DamageDef inherits from `Bomb` and uses `DamageWorker_Flame`.
+- Howitzer thermobaric shells: projectile uses `PrometheumFlame` (non-explosive) → CompExplosiveCE triggers secondary explosion with `explosiveDamageType=Thermobaric`. The overpressure postfix on `GenExplosionCE.DoExplosion` fires for the comp explosion.
+- `RegionTraverser.BreadthFirstTraverse` accepts an `entryCondition` predicate (e.g. check `region.door == null || region.door.Open`) and a `regionProcessor`. Prefer over `map.mapPawns.AllPawnsSpawned`.
+- `Region.ListerThings.ThingsInGroup(ThingRequestGroup.Pawn)` returns pawns in a region. Deduplicate with a pooled `HashSet<Pawn>` from `SimplePool<T>`.
+- `Room.UsesOutdoorTemperature` is true when touching map edge or `OpenRoofCount >= ceil(CellCount * 0.25)`. Use as a proxy for enclosed-space detection.
+- CE stores additional explosion stats in `ExplosionCE` (extends `Explosion`): `height`, `armorPenetration`, `damAmount`, `FalloffCurve`, `GetArmorPenetrationAtCE(IntVec3)`.
+
+## Custom def creation
+
+- Custom `DamageDef`: inherit from `BluntBase` or `Bomb` via `ParentName`. Override `workerClass` to `DamageWorker_AddInjury` to avoid vanilla Blunt stun/penetration mechanics when handling effects yourself. Set custom `<hediff>`, `<hediffSkin>`, `<hediffSolid>` to reference custom `HediffDef`s for distinguishable injuries.
+- Custom `HediffDef` for injuries: inherit from `InjuryBase` (abstract, provides `hediffClass>Hediff_Injury</hediffClass>` and other base properties). Include `HediffCompProperties_TendDuration`, `HediffCompProperties_Infecter`, `HediffCompProperties_GetsPermanent` comps as needed. Set `injuryProps` with `painPerSeverity`, `bleedRate`, `canMerge`, `destroyedLabel`.
+- Custom mod extension: subclass `DefModExtension` with mutable fields. Declare with `[<AllowNullLiteral>]`. Add via `<li Class="Namespace.ExtensionClass">` in XML or via `PatchOperationAddModExtension` in patches.
+- Use `PatchOperationFindMod` with `<mods><li>Combat Extended</li></mods>` guard when patching CE defs.
+- Use `PatchOperationAddModExtension` to add extensions to specific defs by xpath.
+
+## CE stats calibration
+
+- CE explosion `damageAmountBase` and `explosionRadius` are game-design values, not physical quantities. Do not treat them as direct TNT/kg mappings without calibration.
+- For HE artillery/mortar rounds, a log-linear power-law model `tntKg = k · damage^a · radius^b` fits real-world data with R² ≈ 0.96. Airburst variants (same filler, wider radius) help disentangle damage vs radius contributions.
+- Thermobaric weapons have CE stats that are inconsistent with real blast yields — a separate regression model fails (R² ≈ 0.40). Use explicit per-weapon `tntEquivalentKg` override values instead.
+- Small-caliber thermobarics (30-40mm) produce ~0.03-0.05 kg TNT blast equivalent; RPG-7 thermobaric ~1.8-3.0 kg; howitzer thermobaric comp explosions ~4-9 kg.
+- HE regression-derived coefficients for `OverpressureSettingsDef`: `damagePerKgTnt ≈ 236`, `damageYieldWeight ≈ 0.82`, `YieldExponent ≈ 1.60`, `RadiusMetresPerKgTnt = 2.0`.
+- CE caliber multiplier: damage may be scaled by `RangedWeapon_DamageMultiplier` stat on the firing weapon. Radius is not scaled. Always verify in-game values via UI or debug log before using in calibration.
+
+## Git rebase (no TUI lockup)
+
+- When squashing or rebasing RimWorld mod commits, use `GIT_SEQUENCE_EDITOR=: git rebase -i <base>` to accept the default todo list without opening an editor. Alternatively use `GIT_SEQUENCE_EDITOR="sed -i '2,3s/pick/squash/'"` for targeted squashing. Do NOT run plain `git rebase -i` without `GIT_EDITOR` or `GIT_SEQUENCE_EDITOR` set, as it will block waiting for TUI input.
+
 ## First-party mod justfile
 
 - Every mod authored in its own repository must include a tracked root `justfile`. Once present, treat its recipes as the project contract instead of invoking their underlying commands separately.
