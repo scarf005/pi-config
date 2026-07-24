@@ -56,5 +56,6 @@ description: RimWorld mod C# and F# conventions, keyed localization, dependency 
 - Make local paths environment-overridable and use these defaults on this machine:
   - RimWorld: `/media/scarf/@steam/SteamLibrary/steamapps/common/RimWorld`
   - Config: `/home/scarf/.config/unity3d/Ludeon Studios/RimWorld by Ludeon Studios/Config/ModsConfig.xml`
+  - Log: `/home/scarf/.config/unity3d/Ludeon Studios/RimWorld by Ludeon Studios/Player.log`
 - Do not edit `ModsConfig.xml` while RimWorld is running because the game can overwrite it on exit.
 - Validate a new justfile with `just --list`, `just fmt`, and `just build`; run `just fmt` a second time to verify idempotence. Run `just install` or `just install-enable` only when the task explicitly requests the corresponding local state change.
