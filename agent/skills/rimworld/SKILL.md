@@ -31,6 +31,7 @@ description: RimWorld mod C# and F# conventions, keyed localization, dependency 
 - Prefer idiomatic pipelines and clarity before speculative optimization. `Seq.filter`, `Seq.sortBy`, tuples, and options are appropriate for infrequent user-triggered paths; reserve direct loops, allocation avoidance, and single-pass selection for measured or per-tick hot paths.
 - Pin Fantomas as a repository-local .NET tool, store its settings in `.editorconfig`, and use it for all `.fs`, `.fsi`, and `.fsx` formatting.
 - Only add `///` XML docstrings when they supply information the code does not already express: mathematical models, design intent, non-obvious side effects, contracts, or category groupings of large member lists. Never add docstrings that merely paraphrase a function name, its parameter names, its return type, or a self-documenting attribute such as `[<HarmonyPatch>]` or `[<StaticConstructorOnStartup>]`. A one-line private helper with a descriptive name and a self-explanatory body rarely needs a docstring.
+- When a docstring references an uncommon concept (mathematical model, algorithm, domain-specific term), include a URL to the canonical reference so readers can learn more without guessing search terms.
 
 ## Build
 
