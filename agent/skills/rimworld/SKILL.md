@@ -30,6 +30,7 @@ description: RimWorld mod C# and F# conventions, keyed localization, dependency 
 - Preserve C# API behavior explicitly at interop boundaries. Use pattern matching and `Option` for nullable results in non-hot paths. F# can apply exact, type-directed `op_Implicit` conversions, but it does not chain every C# upcast-plus-conversion sequence; construct `LocalTargetInfo`, `LookTargets`, and similar targets explicitly when inference fails.
 - Prefer idiomatic pipelines and clarity before speculative optimization. `Seq.filter`, `Seq.sortBy`, tuples, and options are appropriate for infrequent user-triggered paths; reserve direct loops, allocation avoidance, and single-pass selection for measured or per-tick hot paths.
 - Pin Fantomas as a repository-local .NET tool, store its settings in `.editorconfig`, and use it for all `.fs`, `.fsi`, and `.fsx` formatting.
+- Only add `///` XML docstrings when they supply information the code does not already express: mathematical models, design intent, non-obvious side effects, contracts, or category groupings of large member lists. Never add docstrings that merely paraphrase a function name, its parameter names, its return type, or a self-documenting attribute such as `[<HarmonyPatch>]` or `[<StaticConstructorOnStartup>]`. A one-line private helper with a descriptive name and a self-explanatory body rarely needs a docstring.
 
 ## Build
 
