@@ -42,6 +42,14 @@ deno run --allow-read ~/.config/pi/agent/skills/rimworld/scripts/validate-mod.ts
 
 It catches `defInjected` lowercase, missing `About.xml`, and unrecognized `Languages/` subdirectories.
 
+## DLL management (binary artifacts)
+
+- **Never commit `.dll` files to the repository.** Compiled assemblies are build artifacts, not source.
+- Every mod repository must include `*.dll` in its `.gitignore`. Also add `Source/**/bin/` and `Source/**/obj/`.
+- If a repository already tracks `.dll` files, remove them with `git filter-repo --path <path> --invert-paths` and force-push.
+- Distribute compiled DLLs via GitHub Releases, not via git history. Copy the reference CI workflow from `references/ci-build-release.yml` into `.github/workflows/release.yml` and adjust the env vars.
+- The CI workflow: builds the .dll on tag push → packages the full mod tree (About/, Assemblies/, Defs/, Languages/, Patches/, Textures/) into a zip → attaches to a GitHub Release.
+
 ## Build
 
 1. Read the repository's build instructions and project files, then invoke the documented project command directly.

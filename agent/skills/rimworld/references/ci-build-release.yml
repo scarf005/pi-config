@@ -1,0 +1,67 @@
+# Copy this to .github/workflows/release.yml in your RimWorld mod repo.
+# Adjust:
+#   - env.RIMWORLD_VERSION (1.5, 1.6, etc.)
+#   - env.MOD_PACKAGE_ID (from About/About.xml <packageId>)
+#   - env.SOLUTION_FILE (path to .fsproj or .csproj)
+#   - env.ASSEMBLY_DIR (output dir containing the built .dll, relative to repo root)
+
+name: Build & Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+env:
+  RIMWORLD_VERSION: '1.6'
+  MOD_PACKAGE_ID: 'your.mod.packageid'
+  SOLUTION_FILE: Source/YourMod/YourMod.fsproj
+  ASSEMBLY_DIR: 1.6/Assemblies
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - run: dotnet build '${{ env.SOLUTION_FILE }}' -c Release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.MOD_PACKAGE_ID }}-${{ github.ref_name }}
+          path: ${{ env.ASSEMBLY_DIR }}/*.dll
+
+  package:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.MOD_PACKAGE_ID }}-${{ github.ref_name }}
+          path: ${{ env.ASSEMBLY_DIR }}
+
+      - name: create mod archive
+        run: |
+          mkdir -p dist/"$MOD_PACKAGE_ID"
+          # mod metadata
+          cp -r About dist/"$MOD_PACKAGE_ID"/
+          # built assembly
+          mkdir -p dist/"$MOD_PACKAGE_ID"/Assemblies
+          cp "$ASSEMBLY_DIR"/*.dll dist/"$MOD_PACKAGE_ID"/Assemblies/
+          # optional: copy Defs, Languages, Patches, Textures
+          for dir in Defs Languages Patches Textures; do
+            [ -d "$RIMWORLD_VERSION/$dir" ] && cp -r "$RIMWORLD_VERSION/$dir" dist/"$MOD_PACKAGE_ID"/
+          done
+          cd dist && zip -r "../$MOD_PACKAGE_ID-${{ github.ref_name }}.zip" "$MOD_PACKAGE_ID"
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.MOD_PACKAGE_ID }}-${{ github.ref_name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
