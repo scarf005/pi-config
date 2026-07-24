@@ -37,6 +37,7 @@
 3. Check `git status --short`.
 4. Verify target files belong to the intended repo.
 5. Prefer tracked files; create new files only inside the intended repo.
+6. Before creating, moving, or adding files inside a skill directory, read pi's skill documentation at `<pi-docs>/docs/skills.md` for the correct directory structure (`scripts/`, `references/`, `assets/`).
 
 ## Implementation
 
