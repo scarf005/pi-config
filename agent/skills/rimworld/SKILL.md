@@ -33,6 +33,15 @@ description: RimWorld mod C# and F# conventions, keyed localization, dependency 
 - Only add `///` XML docstrings when they supply information the code does not already express: mathematical models, design intent, non-obvious side effects, contracts, or category groupings of large member lists. Never add docstrings that merely paraphrase a function name, its parameter names, its return type, or a self-documenting attribute such as `[<HarmonyPatch>]` or `[<StaticConstructorOnStartup>]`. A one-line private helper with a descriptive name and a self-explanatory body rarely needs a docstring.
 - When a docstring references an uncommon concept (mathematical model, algorithm, domain-specific term), include a URL to the canonical reference so readers can learn more without guessing search terms.
 
+## Translation validation
+
+Run the structure validator from the mod root:
+```bash
+deno run --allow-read ~/.config/pi/agent/skills/rimworld/scripts/validate-mod.ts
+```
+
+It catches `defInjected` lowercase, missing `About.xml`, and unrecognized `Languages/` subdirectories.
+
 ## Build
 
 1. Read the repository's build instructions and project files, then invoke the documented project command directly.

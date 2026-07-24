@@ -1,12 +1,8 @@
+#!/usr/bin/env -S deno run --allow-read --no-prompt
+
 /**
  * Validate RimWorld mod folder structure.
- * Run from the mod root: deno run --allow-read <path>/validate-mod.ts
- *
- * Checks:
- *  - Languages/<lang>/DefInjected case
- *  - About.xml exists and is valid
- *  - LoadFolders.xml optional lint
- *  - Common mistakes (defInjected lowercase, lang folder mismatch, etc.)
+ * Run from the mod root: deno run --allow-read <skill-dir>/scripts/validate-mod.ts
  */
 
 const cwd = Deno.cwd()
@@ -65,13 +61,6 @@ try {
           if (!defType.isDirectory) {
             fail(`Languages/${lang.name}/DefInjected/${defType.name} should be a subdirectory`)
             continue
-          }
-
-          if (defType.name.endsWith('s')) {
-            const singular = defType.name.slice(0, -1)
-            // RimWorld strips trailing 's' if exact type not found
-          } else {
-            // Type folder should usually end with 's' or be a full type name
           }
 
           for (const file of Deno.readDirSync(`${langDir}/${lang.name}/DefInjected/${defType.name}`)) {
@@ -135,7 +124,7 @@ try {
   Deno.readTextFileSync(lfPath)
   ok('LoadFolders.xml exists')
 } catch {
-  // optional — many mods don't need it
+  // optional
 }
 
 console.log()
