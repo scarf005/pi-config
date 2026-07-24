@@ -57,7 +57,9 @@ description: RimWorld mod C# and F# conventions, keyed localization, dependency 
 
 ## Translations (DefInjected)
 
-- Folder: `Languages/[langFolderName]/DefInjected/[DefType]/` where `langFolderName` must match `Prefs.xml` `<langFolderName>` EXACTLY, including parentheses. Korean: `Languages/Korean (한국어)/DefInjected/`.
+- Folder: `Languages/[langFolderName]/DefInjected/[DefType]/` — `DefInjected` must use this exact case (capital D, capital I). RimWorld's `DefInjectionsFolderName` constant is `"DefInjected"` and the match is case-sensitive on Linux.
+  `langFolderName` must match `Prefs.xml` `<langFolderName>` EXACTLY, including parentheses. Korean: `Languages/Korean (한국어)/DefInjected/`.
+- Do not create the folder as `defInjected` — the lowercase variant will be silently ignored.
 - Subdirectories named by Def type with trailing 's' (`DamageDefs`, `HediffDefs`, `ThingDefs`). RimWorld strips trailing 's' if exact type match fails, then retries.
 - Key format: `<defName.fieldName>translated text</defName.fieldName>` (e.g. `<CEOP_Barotrauma.label>기압손상</CEOP_Barotrauma.label>`)
 - For custom Def types in custom namespaces, use the def type's full name as the folder (e.g. `CombatExtended.AmmoCategoryDef/`). Standard Verse defs use bare type names.
