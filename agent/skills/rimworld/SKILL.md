@@ -83,6 +83,16 @@ description: RimWorld mod C# and F# conventions, keyed localization, dependency 
 - Use `PatchOperationFindMod` with `<mods><li>Combat Extended</li></mods>` guard when patching CE defs.
 - Use `PatchOperationAddModExtension` to add extensions to specific defs by xpath.
 
+## Mod Settings (player-facing configuration)
+
+- When the user asks for a toggle or setting that the **player** should control at runtime (e.g. enable logging, adjust thresholds), implement `Mod` + `ModSettings` — never bury it as an XML def field that requires manual file edits.
+- XML def fields (`OverpressureSettingsDef`, `ThingDef`, etc.) are for **mod developer** tuning, not player configuration. They ship with reasonable defaults and are only changed when recalibrating the mod itself.
+- Pattern:
+  - Subclass `Mod(content: ModContentPack)` with `override SettingsCategory()` and `override DoSettingsWindowContents(Rect)`.
+  - Subclass `ModSettings()` with `let mutable` fields, public members, and `override ExposeData()` calling `Scribe_Values.Look`.
+  - In F#, place `ModSettings` subclass **before** `Mod` subclass in the same file (F# type ordering). Use `let mutable` + property wrappers instead of `[<DefaultValue>] val mutable` to avoid CLR init issues.
+  - Do not call `GetSettings<T>()` from the constructor body; defer to `LongEventHandler.ExecuteWhenFinished`.
+
 ## CE stats calibration
 
 - CE explosion `damageAmountBase` and `explosionRadius` are game-design values, not physical quantities. Do not treat them as direct TNT/kg mappings without calibration.
