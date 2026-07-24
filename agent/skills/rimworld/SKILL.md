@@ -92,10 +92,6 @@ description: RimWorld mod C# and F# conventions, keyed localization, dependency 
 - HE regression-derived coefficients for `OverpressureSettingsDef`: `damagePerKgTnt ≈ 236`, `damageYieldWeight ≈ 0.82`, `YieldExponent ≈ 1.60`, `RadiusMetresPerKgTnt = 2.0`.
 - CE caliber multiplier: damage may be scaled by `RangedWeapon_DamageMultiplier` stat on the firing weapon. Radius is not scaled. Always verify in-game values via UI or debug log before using in calibration.
 
-## Git rebase (no TUI lockup)
-
-- When squashing or rebasing RimWorld mod commits, use `GIT_SEQUENCE_EDITOR=: git rebase -i <base>` to accept the default todo list without opening an editor. Alternatively use `GIT_SEQUENCE_EDITOR="sed -i '2,3s/pick/squash/'"` for targeted squashing. Do NOT run plain `git rebase -i` without `GIT_EDITOR` or `GIT_SEQUENCE_EDITOR` set, as it will block waiting for TUI input.
-
 ## First-party mod justfile
 
 - Every mod authored in its own repository must include a tracked root `justfile`. Once present, treat its recipes as the project contract instead of invoking their underlying commands separately.
