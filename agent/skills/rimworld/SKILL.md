@@ -5,6 +5,12 @@ description: RimWorld mod C# and F# conventions, keyed localization, dependency 
 
 # RimWorld
 
+## RimWorld 1.6 reference source
+
+- Use the local RimWorld 1.6 decompiled reference clone at `/home/scarf/repo/rw/RimworldDecompile` to verify native APIs, implementation details, and efficient vanilla call patterns before guessing
+- Reuse this clone instead of creating temporary duplicate clones; treat it as read-only reference material and do not copy decompiled game code into mods
+- For performance work, inspect both the relevant native type and vanilla call sites using that API, then prefer cached managers, grids, region listers, and direct lists over broad enumerable scans
+
 ## .NET
 
 - Use semantic named arguments for every interpolated keyed translation. Pass values with `Named("argumentName")` and use the exact matching `{argumentName}` placeholder in every language file; do not use positional placeholders such as `{0}`.
