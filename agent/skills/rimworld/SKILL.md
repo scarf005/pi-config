@@ -120,6 +120,18 @@ If a translation does not appear in-game despite a seemingly correct XML entry:
 - Verify the key format path: the game can navigate through to the exact field. Comp properties must use the `comps.CompClassName.propertyName` format because they live inside list elements, not on the def class.
 - Run the RimWorld language report generator or compare against the output of `DefInjectionUtility.ForEachPossibleDefInjection` to list all valid translation keys for a def.
 
+## Wound cause display (health tab tooltip)
+
+- The "원인: ..." tooltip on hediffs in the health tab comes from `hediff.combatLogEntry` / `hediff.combatLogText`, which are set by `DamageResult.AssociateWithLog()` — never by `DamageInfo` alone.
+- `DamageInfo.weapon` sets `Hediff_Injury.sourceLabel` / `sourceDef` for the bracketed label (e.g. "타박상 (볼레)"), but the full cause line requires a battle log entry.
+- When applying damage outside the standard explosion/projectile pipeline (e.g. custom postfix damage), you must:
+  1. Create a `BattleLogEntry_ExplosionImpact(instigator, recipient, weaponDef, projectileDef, damageDef)`
+  2. `Find.BattleLog.Add(battleLogEntry)`
+  3. Capture `pawn.TakeDamage(dinfo)` result and call `damageResult.AssociateWithLog(battleLogEntry)`
+- `BattleLogEntry_ExplosionImpact` handles both Pawn and non-Pawn initiators (falls back to `initiatorThing = initiator.def`).
+- `DamageResult.AssociateWithLog` sets `combatLogEntry` (WeakReference) and `combatLogText` (pre-generated string) on every hediff in the result. Without this, the cause tooltip will be empty regardless of `DamageInfo.weapon`.
+- Reference: `DamageWorker.ExplosionDamageThing` in the decompiled source shows the canonical pattern.
+
 ## CE-specific APIs
 
 - `GenExplosionCE.DoExplosion` is a standalone static method (not an override of `GenExplosion`). Patch with `[<HarmonyPatch(typeof<GenExplosionCE>, nameof GenExplosionCE.DoExplosion)>]`.
