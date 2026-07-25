@@ -130,6 +130,8 @@ If a translation does not appear in-game despite a seemingly correct XML entry:
   3. Capture `pawn.TakeDamage(dinfo)` result and call `damageResult.AssociateWithLog(battleLogEntry)`
 - `BattleLogEntry_ExplosionImpact` handles both Pawn and non-Pawn initiators (falls back to `initiatorThing = initiator.def`).
 - `DamageResult.AssociateWithLog` sets `combatLogEntry` (WeakReference) and `combatLogText` (pre-generated string) on every hediff in the result. Without this, the cause tooltip will be empty regardless of `DamageInfo.weapon`.
+- `Hediff_MissingPart` (destroyed body parts) is created inside `AddHediff`, not added to `DamageResult.hediffs`. `AssociateWithLog` only iterates `result.hediffs`, so destroyed parts won't get combat log info. After `AssociateWithLog`, check `pawn.health.hediffSet.PartIsMissing(part)` and manually set `combatLogEntry` / `combatLogText` on the matching `Hediff_MissingPart`.
+- For CE-specific overpressure/explosion postfix damage: resolve the firing Pawn from the CE `instigator` parameter via `(instigator as ProjectileCE)?.launcher` before creating `BattleLogEntry_ExplosionImpact`, since CE passes the projectile object, not the Pawn.
 - Reference: `DamageWorker.ExplosionDamageThing` in the decompiled source shows the canonical pattern.
 
 ## CE-specific APIs
@@ -142,7 +144,9 @@ If a translation does not appear in-game despite a seemingly correct XML entry:
 - `RegionTraverser.BreadthFirstTraverse` accepts an `entryCondition` predicate (e.g. check `region.door == null || region.door.Open`) and a `regionProcessor`. Prefer over `map.mapPawns.AllPawnsSpawned`.
 - `Region.ListerThings.ThingsInGroup(ThingRequestGroup.Pawn)` returns pawns in a region. Deduplicate with a pooled `HashSet<Pawn>` from `SimplePool<T>`.
 - `Room.UsesOutdoorTemperature` is true when touching map edge or `OpenRoofCount >= ceil(CellCount * 0.25)`. Use as a proxy for enclosed-space detection.
-- CE stores additional explosion stats in `ExplosionCE` (extends `Explosion`): `height`, `armorPenetration`, `damAmount`, `FalloffCurve`, `GetArmorPenetrationAtCE(IntVec3)`.
+- CE stores additional explosion stats in `ExplosionCE` (extends `Explosion`): `height`, `armorPenetration`, `damAmount`, `weapon`, `projectile`, `FalloffCurve`, `GetArmorPenetrationAtCE(IntVec3)`.
+- CE explosion `instigator` resolution: `CompExplosiveCE.Explode()` receives `instigator` from the caller — `ProjectileCE` passes `this` (the projectile itself, not the Pawn), `Projectile_FireTrail` passes `launcher` (the Pawn), `AmmoThing` passes `this`. When using the `instigator` parameter from a `GenExplosionCE.DoExplosion` postfix, resolve the actual Pawn via `(instigator as ProjectileCE)?.launcher` — `ProjectileCE.launcher: Thing` is the firing pawn/weapon.
+- `GenExplosionCE.DoExplosion` sets `explosion.projectile = parent.def` from `CompExplosiveCE.Explode` (the explosive thing's ThingDef). The `weapon` parameter is explicitly null in typical calls. For battle log entries, use `projectile` (ThingDef) as both `weaponDef` and `projectileDef`.
 
 ## Custom def creation
 
