@@ -13,7 +13,7 @@ description: RimWorld mod C# and F# conventions, keyed localization, dependency 
 
 ## .NET
 
-- Use semantic named arguments for every interpolated keyed translation. Pass values with `Named("argumentName")` and use the exact matching `{argumentName}` placeholder in every language file; do not use positional placeholders such as `{0}`.
+- Use semantic named arguments for every interpolated keyed translation. Pass values with `Named("argumentName")` and use the exact matching `{argumentName}` placeholder in every language file; do not use positional placeholders such as `{0}`. For example, use `Good: {name}` with `value.Named("name")`, never `Bad: {0}`.
 - Keep placeholder names stable across translations and verify every affected `Translate(...)` call against its keyed XML entry.
 
 ## C#
@@ -73,6 +73,8 @@ It catches `defInjected` lowercase, missing `About.xml`, and unrecognized `Langu
 - RimWorld 1.6 reference decompile: `/home/scarf/repo/rw/RimworldDecompile`
 
 ## Translations (DefInjected)
+
+- Every new mod must include English and Korean translations. Add player-facing keyed strings in both `Languages/English/Keyed/` and `Languages/Korean (한국어)/Keyed/`; add both DefInjected translations when the mod introduces translatable defs.
 
 - Folder: `Languages/[langFolderName]/DefInjected/[DefType]/` — `DefInjected` must use this exact case (capital D, capital I). RimWorld's `DefInjectionsFolderName` constant is `"DefInjected"` and the match is case-sensitive on Linux.
   `langFolderName` must match `Prefs.xml` `<langFolderName>` EXACTLY, including parentheses. Korean: `Languages/Korean (한국어)/DefInjected/`.
