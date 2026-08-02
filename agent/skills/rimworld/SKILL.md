@@ -70,6 +70,11 @@ It catches `defInjected` lowercase, missing `About.xml`, and unrecognized `Langu
 5. Install only the exact DLL produced by the verified target-source build. Never patch, rewrite, decompile/recompile, or substitute a DLL to bypass a source build failure, including in a local test mod.
 6. Do not copy or overwrite build artifacts (such as DLLs) in the Steam Workshop directory (`steamapps/workshop/content/...`). This directory is managed automatically by Steam. Mod installation, local testing, and debugging must only target the local RimWorld `Mods` directory (`steamapps/common/RimWorld/Mods/...`) or user-managed directories. A running game does not prohibit copying a verified build into a local mod; it continues using its already loaded DLL until restart. Do not require exit merely to install that DLL.
 
+## Runtime control
+
+- Never launch the RimWorld executable, including GUI, headless, batch-mode, or test-runner invocations, unless the user explicitly authorizes that specific launch. Build, install, enable, or an earlier launch does not authorize a later launch.
+- The user controls game startup, save selection, and in-game verification. When the user reports a runtime result, use that result as evidence and do not rerun the game independently.
+
 ## Local runtime paths
 
 - RimWorld install: `/media/scarf/@steam/SteamLibrary/steamapps/common/RimWorld`
@@ -189,6 +194,7 @@ If a translation does not appear in-game despite a seemingly correct XML entry:
 ## First-party mod justfile
 
 - Every mod authored in its own repository must include a tracked root `justfile`. Once present, treat its recipes as the project contract instead of invoking their underlying commands separately.
+- In third-party repositories, keep agent-created local workflow files untracked and locally ignored. Do not commit them unless the user explicitly requests that repository-facing change.
 - Provide these public recipes:
   - `just fmt`: format all source using tracked configuration—K&R via `dotnet format` for C#, or a repository-pinned Fantomas tool for F#.
   - `just build`: compile the mod and produce every runtime assembly in its project-defined version directory.
