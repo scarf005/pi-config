@@ -72,8 +72,9 @@ It catches `defInjected` lowercase, missing `About.xml`, and unrecognized `Langu
 
 ## Runtime control
 
-- Never launch the RimWorld executable, including GUI, headless, batch-mode, or test-runner invocations, unless the user explicitly authorizes that specific launch. Build, install, enable, or an earlier launch does not authorize a later launch.
-- The user controls game startup, save selection, and in-game verification. When the user reports a runtime result, use that result as evidence and do not rerun the game independently.
+- Never launch the interactive RimWorld game client or open a visible game window unless the user explicitly authorizes that specific launch. Build, install, enable, or an earlier launch does not authorize a later interactive launch.
+- Automated test-runner invocations are allowed when they are non-interactive, use isolated config/save/log paths, do not alter the user's normal runtime state, and exit automatically. If the test runner requires or may open a visible game window, obtain explicit authorization first.
+- The user controls interactive game startup, save selection, and in-game verification. When the user reports a runtime result, use that result as evidence and do not independently repeat the interactive check.
 
 ## Local runtime paths
 
