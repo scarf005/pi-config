@@ -24,6 +24,5 @@
     "../../../repo/assisted-by/packages/gh-title-body-guard"
   ],
   "defaultProjectTrust": "always",
-  "theme": "dark",
-  "skills": ["!skills/deno-script"]
+  "theme": "dark"
 }
