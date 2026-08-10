@@ -81,10 +81,16 @@ It catches `defInjected` lowercase, missing `About.xml`, and unrecognized `Langu
 - RimWorld install: `/media/scarf/@steam/SteamLibrary/steamapps/common/RimWorld`
 - Mods directory: `/media/scarf/@steam/SteamLibrary/steamapps/common/RimWorld/Mods`
 - Player log: `/home/scarf/.config/unity3d/Ludeon Studios/RimWorld by Ludeon Studios/Player.log`
+- Save files: `/home/scarf/.config/unity3d/Ludeon Studios/RimWorld by Ludeon Studios/Saves`
 - Mods config: `/home/scarf/.config/unity3d/Ludeon Studios/RimWorld by Ludeon Studios/Config/ModsConfig.xml`
 - Prefs (language, resolution): `/home/scarf/.config/unity3d/Ludeon Studios/RimWorld by Ludeon Studios/Config/Prefs.xml`
 - CE Steam Workshop: `/media/scarf/@steam/SteamLibrary/steamapps/workshop/content/294100/2890901044`
 - RimWorld 1.6 reference decompile: `/home/scarf/repo/rw/RimworldDecompile`
+
+## Save file inspection
+
+- `.rws` save files are XML. Always use `rg -F` (fixed-string) for literal tag/def name search — regex patterns silently fail on `<tag>` angle brackets
+- Prefer `rg -F "pattern" save.rws` over `rg "pattern"` for any XML file
 
 ## Translations (DefInjected)
 

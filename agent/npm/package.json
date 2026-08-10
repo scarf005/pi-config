@@ -4,9 +4,9 @@
   "license": "AGPL-3.0-only",
   "dependencies": {
     "@alexanderfortin/pi-token-usage": "^0.3.0",
-    "pi-ask-user": "^0.13.0",
+    "pi-ask-user": "^0.13.1",
     "pi-simplify": "^0.2.3",
-    "pi-subagents": "^0.36.0",
-    "pi-web-access": "^0.13.0"
+    "pi-subagents": "^0.40.0",
+    "pi-web-access": "^0.17.1"
   }
 }
