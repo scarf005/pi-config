@@ -1,0 +1,7 @@
+{
+  "fmt": { "semiColons": false, "lineWidth": 120 },
+  "tasks": {
+    "test": "deno test --allow-read --allow-run test",
+    "eval:contract": "deno run --allow-env --allow-read --allow-run --allow-write evals/contract-adherence.ts"
+  }
+}
