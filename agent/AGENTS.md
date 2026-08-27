@@ -79,6 +79,10 @@
 
 ## Local tools and conventions
 
+- Before installing or cloning a tool, check its canonical invocation and built-in discovery path, including Git and
+  package-manager subcommands; do not rely only on `command -v` for the bare tool name
+- For worktrees, use the installed `git-gtr` through `git gtr`; run `git gtr version` before considering installation or
+  cloning another copy
 - Prefer `xh` for web requests, `rg --heading`/`fd`/`fzf` for search, `gh` for GitHub, and `playwright-cli` for browser
   validation
 - Use task-scoped commands; exit code 0 with no output means completion
