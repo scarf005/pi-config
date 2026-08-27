@@ -45,11 +45,11 @@
         "thinking": "high"
       },
       "reviewer": {
-        "model": "openai-codex/gpt-5.6-sol",
+        "model": "openai-codex/gpt-5.6-luna",
         "fallbackModels": [
           "openai-codex/gpt-5.6-terra"
         ],
-        "thinking": "xhigh"
+        "thinking": "low"
       },
       "worker": {
         "model": "openai-codex/gpt-5.6-luna",
