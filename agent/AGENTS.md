@@ -87,6 +87,9 @@
   validation
 - Use task-scoped commands; exit code 0 with no output means completion
 - This machine uses fish, so avoid Bash-only quoting and heredocs; use `--body-file` for multiline GitHub text
+- Do not launch subagents, including reviewers, for routine narrowly scoped work merely to increase confidence; use
+  direct inspection and validation instead. Delegate only when the user explicitly requests it or independent review is
+  required by the task's stated acceptance, risk, or scope.
 - When the user explicitly requests subagents, delegate substantive planning or implementation before doing direct
   implementation work
 - Prefer functional style, TypeScript options objects for three or more arguments, C++ structs, single-line arrow
