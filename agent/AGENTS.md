@@ -36,6 +36,9 @@
 
 - Before editing, identify the repository root, read applicable `AGENTS.md`, inspect `git status --short`, verify target
   ownership, and treat existing changes as user-owned unless proved otherwise
+- Do not run broad workspace reconnaissance as a generic preflight. Once the working directory and task target are known,
+  inspect only the path to the repository root, applicable instructions on that path, and task-relevant files; reserve
+  wider file listings or parent-directory scans for a concrete need discovered during the task.
 - Never discard, overwrite, stage, commit, publish, or mix user-owned changes; prefer tracked files and create files
   only inside the intended repository
 - Follow the user's explicit approach; prefer the simplest maintainable general solution satisfying the full invariant

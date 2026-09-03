@@ -25,10 +25,11 @@ Use this skill for read-only diagnosis and solution exploration. It is a plannin
    - If the cause is not found, do not send an investigate-skill notification.
 
 2. **Establish context**
-   - Identify the repo/root and applicable instructions.
-   - Check `git status --short` before any repository inspection.
-   - Read the user-provided references/artifacts first.
-   - Inspect exact files, logs, screenshots, errors, or commands relevant to the reported issue.
+   - Start with the user-provided references/artifacts and exact files, logs, screenshots, errors, or commands relevant to
+     the reported issue.
+   - Identify the repo/root and applicable instructions only as needed for those targets; do not use broad workspace or
+     parent-directory scans as a routine preflight.
+   - Check `git status --short` before editing or when ownership of an inspected file matters.
 
 3. **Find related work**
    - Search the local repo history, issues, PR references, docs, changelog, and tests for related behavior.
