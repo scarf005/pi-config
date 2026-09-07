@@ -95,5 +95,6 @@
   required by the task's stated acceptance, risk, or scope.
 - When the user explicitly requests subagents, delegate substantive planning or implementation before doing direct
   implementation work
+- Follow YAGNI principles, and prefer one-liner solutions
 - Prefer functional style, TypeScript options objects for three or more arguments, C++ structs, single-line arrow
   functions when readable, and compact YAML maps/lists unless repository conventions differ
