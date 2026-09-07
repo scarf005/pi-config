@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+config=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+export PI_CODING_AGENT_DIR="$config/agent"
+export PI_COMPUTER_USE_LINUX_HELPER_PATH="$PI_CODING_AGENT_DIR/bin/computer-use-linux-bridge"
+export PATH="$PI_CODING_AGENT_DIR/npm/node_modules/.bin:$PATH"
+export GODOT_PATH="${GODOT_PATH:-$config/agent/bin/godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64}"
+# Managed browser wrapper adds --enable-unsafe-swiftshader so WebGL2 works on
+# the GPU-less Xvfb display (Chromium 153+ removed automatic software fallback).
+export PI_COMPUTER_USE_CHROME_EXECUTABLE="${PI_COMPUTER_USE_CHROME_EXECUTABLE:-$config/bin/pi-chrome}"
+exec "$config/bin/game-desktop" pi \
+    -e "$PI_CODING_AGENT_DIR/npm/node_modules/@injaneity/pi-computer-use/extensions/computer-use.ts" "$@"

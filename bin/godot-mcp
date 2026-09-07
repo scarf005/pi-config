@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+if [ "${PI_GAME_DESKTOP:-}" != 1 ] || [ -z "${DISPLAY:-}" ] || [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
+    echo "Godot MCP requires the isolated desktop. Start Pi with ~/.config/pi/bin/pi-game." >&2
+    exit 1
+fi
+config=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+export GODOT_PATH="${GODOT_PATH:-$config/agent/bin/godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64}"
+if [ ! -x "$GODOT_PATH" ]; then
+    echo "GODOT_PATH is not executable: $GODOT_PATH" >&2
+    exit 1
+fi
+exec node "$config/agent/npm/node_modules/@coding-solo/godot-mcp/build/index.js"

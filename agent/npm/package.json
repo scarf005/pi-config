@@ -4,7 +4,11 @@
   "license": "AGPL-3.0-only",
   "dependencies": {
     "@alexanderfortin/pi-token-usage": "^0.3.0",
+    "@coding-solo/godot-mcp": "0.1.1",
+    "@injaneity/pi-computer-use": "^0.5.1",
+    "@playwright/cli": "0.1.19",
     "pi-ask-user": "^0.14.0",
+    "pi-mcp-adapter": "^2.32.1",
     "pi-simplify": "^0.2.3",
     "pi-subagents": "^0.40.0",
     "pi-web-access": "^0.17.1"

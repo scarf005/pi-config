@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+# Managed browser launcher for pi-computer-use inside the isolated game desktop.
+# Chromium 153+ disables automatic software-GL WebGL fallback; Xvfb has no GPU,
+# so --enable-unsafe-swiftshader is required for WebGL2 context creation.
+config=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+real=${PI_COMPUTER_USE_CHROME_REAL:-}
+if [ -z "$real" ]; then
+    real=$(node -e 'console.log(require(process.argv[1]).chromium.executablePath())' "$config/agent/npm/node_modules/playwright")
+fi
+if [ ! -x "$real" ]; then
+    echo "Chromium executable not found or not executable: $real" >&2
+    echo "Set PI_COMPUTER_USE_CHROME_REAL to the chromium binary." >&2
+    exit 1
+fi
+exec "$real" --enable-unsafe-swiftshader "$@"

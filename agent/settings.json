@@ -25,7 +25,13 @@
     "npm:pi-subagents",
     "npm:pi-web-access",
     "npm:pi-simplify",
-    "../../../repo/assisted-by/packages/gh-title-body-guard"
+    "../../../repo/assisted-by/packages/gh-title-body-guard",
+    "npm:pi-mcp-adapter@2.32.1",
+    {
+      "source": "npm:@injaneity/pi-computer-use@0.5.1",
+      "extensions": [],
+      "skills": []
+    }
   ],
   "defaultProjectTrust": "always",
   "theme": "dark",

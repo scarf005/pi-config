@@ -1,0 +1,194 @@
+#!/bin/sh
+set -eu
+
+if [ "$#" -eq 0 ]; then
+    echo "Usage: game-desktop COMMAND [ARGUMENT...]" >&2
+    exit 2
+fi
+
+config_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+runtime=$(mktemp -d /tmp/pi-game-desktop.XXXXXXXX)
+xvfb_lock="$config_dir/agent/bin/.game-desktop-xvfb.lock"
+child_pid=
+child_pgid=
+child_reaped=0
+child_pidfile="$runtime/child.pid"
+
+child_group_alive() {
+    [ -n "$child_pgid" ] && kill -0 -"$child_pgid" 2>/dev/null
+}
+
+stop_children() {
+    # setsid puts every desktop process in this private process group. Terminate
+    # the group before touching XDG_RUNTIME_DIR, then reap the supervisor.
+    if [ -z "$child_pgid" ] && [ -s "$child_pidfile" ]; then
+        child_pgid=$(cat "$child_pidfile")
+    fi
+    if child_group_alive; then
+        kill -TERM -"$child_pgid" 2>/dev/null || :
+        attempt=0
+        while child_group_alive; do
+            attempt=$((attempt + 1))
+            [ "$attempt" -ge 50 ] && break
+            sleep 0.1
+        done
+        if child_group_alive; then
+            kill -KILL -"$child_pgid" 2>/dev/null || :
+        fi
+    elif [ -n "$child_pid" ] && [ "$child_reaped" -eq 0 ]; then
+        # This only covers the short pid-file startup window.
+        kill -TERM "$child_pid" 2>/dev/null || :
+    fi
+    if [ -n "$child_pid" ] && [ "$child_reaped" -eq 0 ]; then
+        wait "$child_pid" 2>/dev/null || :
+        child_reaped=1
+    fi
+    attempt=0
+    while child_group_alive; do
+        attempt=$((attempt + 1))
+        [ "$attempt" -ge 50 ] && return 1
+        sleep 0.1
+    done
+    return 0
+}
+
+unmount_private_doc() {
+    [ -d "$runtime/doc" ] || return 0
+    if mountpoint -q "$runtime/doc"; then
+        :
+    else
+        mount_status=$?
+        [ "$mount_status" -eq 32 ] && return 0
+        # The portal can remove its mount point while its clients exit.
+        [ -e "$runtime/doc" ] || return 0
+        echo "game-desktop: cannot inspect private document portal mount" >&2
+        return 1
+    fi
+    if command -v fusermount3 >/dev/null 2>&1; then
+        fusermount3 -u "$runtime/doc" 2>/dev/null
+    elif command -v fusermount >/dev/null 2>&1; then
+        fusermount -u "$runtime/doc" 2>/dev/null
+    else
+        echo "game-desktop: cannot unmount private document portal mount" >&2
+        return 1
+    fi
+}
+
+cleanup_resources() {
+    failed=0
+    stop_children || failed=1
+    unmount_private_doc || failed=1
+    # The mount check above prevents descending into a portal FUSE mount;
+    # --one-file-system is a second boundary against mounted external data.
+    rm -rf --one-file-system -- "$runtime" || failed=1
+    if [ -e "$runtime" ] || [ -d "$runtime" ]; then
+        failed=1
+    fi
+    if [ "$failed" -ne 0 ]; then
+        echo "game-desktop: cleanup failed; runtime resources may remain at $runtime" >&2
+        return 1
+    fi
+    return 0
+}
+
+finish() {
+    status=$?
+    trap - EXIT INT TERM
+    cleanup_resources || status=1
+    exit "$status"
+}
+signal_exit() {
+    case "$1" in
+        INT) exit 130 ;;
+        TERM) exit 143 ;;
+    esac
+}
+trap finish EXIT
+trap 'signal_exit INT' INT
+trap 'signal_exit TERM' TERM
+
+# Never inherit the real desktop's display or accessibility bus.
+unset DISPLAY WAYLAND_DISPLAY DBUS_SESSION_BUS_ADDRESS AT_SPI_BUS_ADDRESS SESSION_MANAGER
+export XDG_RUNTIME_DIR="$runtime"
+export XDG_SESSION_TYPE=x11
+export GDK_BACKEND=x11
+export QT_QPA_PLATFORM=xcb
+export SDL_VIDEODRIVER=x11
+export PI_GAME_DESKTOP=1
+export PI_COMPUTER_USE_HEADLESS=0
+export PI_COMPUTER_USE_CURSOR_OVERLAY=0
+export NO_AT_BRIDGE=0
+
+touch "$runtime/Xauthority"
+child_script="$runtime/child.sh"
+cat > "$child_script" <<'CHILD_SCRIPT'
+#!/bin/sh
+set -eu
+
+pidfile=$1
+shift
+printf '%s\n' "$$" > "$pidfile"
+
+xvfb-run -a --auth-file="$XDG_RUNTIME_DIR/Xauthority" \
+    --server-args="-screen 0 1600x900x24 -auth $XDG_RUNTIME_DIR/Xauthority" \
+    sh -ec 'flock -u 9; exec "$@"' sh \
+    dbus-run-session -- sh -ec '
+        helpers=
+        cleanup_helpers() {
+            status=$?
+            trap - EXIT INT TERM
+            for helper in $helpers; do
+                kill -TERM "$helper" 2>/dev/null || :
+            done
+            for helper in $helpers; do
+                wait "$helper" 2>/dev/null || :
+            done
+            exit "$status"
+        }
+        trap cleanup_helpers EXIT
+        trap "exit 130" INT
+        trap "exit 143" TERM
+        openbox --sm-disable >"$XDG_RUNTIME_DIR/openbox.log" 2>&1 &
+        helpers="$helpers $!"
+        /usr/libexec/at-spi-bus-launcher --launch-immediately --a11y=1 --screen-reader=1 >"$XDG_RUNTIME_DIR/accessibility.log" 2>&1 &
+        helpers="$helpers $!"
+        gdbus wait --session --timeout 10 org.a11y.Bus
+        AT_SPI_BUS_ADDRESS=$(gdbus call --session --dest org.a11y.Bus --object-path /org/a11y/bus --method org.a11y.Bus.GetAddress | python3 -c "import ast,sys; print(ast.literal_eval(sys.stdin.read())[0])")
+        export AT_SPI_BUS_ADDRESS
+        /usr/libexec/at-spi2-registryd >"$XDG_RUNTIME_DIR/registry.log" 2>&1 &
+        helpers="$helpers $!"
+        gdbus wait --address "$AT_SPI_BUS_ADDRESS" --timeout 10 org.a11y.atspi.Registry
+        set +e
+        "$@"
+        status=$?
+        set -e
+        exit "$status"
+    ' sh "$@"
+CHILD_SCRIPT
+chmod 700 "$child_script"
+
+# Serialize only automatic display-number selection; the child releases this
+# inherited lock once xvfb-run has started its X server.
+exec 9>"$xvfb_lock"
+flock 9
+
+# setsid creates a new session/process group, while --wait lets the parent
+# reap the supervisor and preserve the command status.
+setsid --wait "$child_script" "$child_pidfile" "$@" <&0 &
+child_pid=$!
+attempt=0
+while [ ! -s "$child_pidfile" ] && kill -0 "$child_pid" 2>/dev/null; do
+    attempt=$((attempt + 1))
+    [ "$attempt" -ge 500 ] && break
+    sleep 0.01
+done
+if [ -s "$child_pidfile" ]; then
+    child_pgid=$(cat "$child_pidfile")
+fi
+
+set +e
+wait "$child_pid"
+status=$?
+child_reaped=1
+set -e
+exit "$status"

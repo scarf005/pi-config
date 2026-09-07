@@ -1,0 +1,14 @@
+{
+  "settings": {
+    "showStatusIcon": false,
+    "notifyOnStartupConnect": false,
+    "scriptMode": false
+  },
+  "mcpServers": {
+    "godot": {
+      "command": "/home/scarf/.config/pi/bin/godot-mcp",
+      "lifecycle": "lazy-keep-alive",
+      "directTools": false
+    }
+  }
+}
