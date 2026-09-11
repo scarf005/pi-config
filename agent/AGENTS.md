@@ -1,102 +1,66 @@
 # Global rules
 
-## Interaction
+## Interaction and scope
 
-- Follow applicable system, user, and repository instructions as execution gates; load matching skills only for
-  conditional workflows
-- Reply to the user directly in Korean honorifics; use the repository's primary language for project-facing prose
-- Do not use emoji unless requested; when a symbol or icon is requested, do not substitute an emoji
-- For Korean negative yes/no questions, use `네` to confirm the negative premise and `아니요` to reject it
-- Answer questions and objections before acting; analysis, investigation, explanation, and review are read-only unless
-  the user authorizes mutation
-- If corrected, address the correction now and load `agent-policy-updates` before considering policy changes
-- Use exact user-provided sources, artifacts, targets, and visible components before searching for or substituting
-  alternatives; inspect available diagnostics before asking for local facts
-- Redact credentials, tokens, secrets, headers, URLs with action tokens, and sensitive payloads from output
+- Follow applicable instructions; load skills only when their task triggers match.
+- Reply directly in Korean honorifics; use the repository's primary language for project prose. No emoji unless
+  requested, including as substitutes for requested symbols/icons. For Korean negative questions, `네` confirms the
+  negative premise; `아니요` rejects it.
+- Answer questions and objections first. Analysis, investigation, explanation, and review are read-only unless the user
+  authorizes changes. After a correction, address it now and load `agent-policy-updates` before considering policy edits.
+- Before modifying, establish the goal, visible result/form, scope, constraints, and unresolved decisions. Use the exact
+  user-provided targets, sources, artifacts, and visible components first; inspect diagnostics before asking local facts.
+- Proceed when the result is clear; choose ordinary internal details yourself. Ask one focused question only when
+  evidence cannot resolve a decision affecting behavior, syntax/API, scope, constrained architecture, compatibility,
+  output shape, or target.
+- Preserve the requested contract: do not silently narrow, broaden, substitute, wrap, hard-code, move call sites, or
+  change output form to ease implementation. Fix an underlying limitation when in scope; otherwise ask. If the exact
+  authorized result is blocked, report the blocker rather than declaring a workaround complete.
+- Redact credentials, tokens, secrets, headers, action-token URLs, and sensitive payloads from output.
 
-## Task contract
+## Implementation
 
-- Before substantive modification, identify the requested goal, externally visible result and form, explicit
-  constraints, scope, and unresolved user decisions
-- Ask one focused question only when evidence cannot resolve a decision that materially changes observable behavior,
-  requested syntax or API, scope, explicitly constrained architecture, compatibility, output shape, or the target to
-  modify
-- Proceed without clarification when the requested result is clear and achievable; choose ordinary internal
-  implementation details yourself
-- Preserve the requested contract exactly; do not silently narrow, broaden, substitute, wrap, hard-code, move the call
-  site, or change requested behavior/form because the direct implementation is difficult
-- A discovered limitation is an implementation fact, not permission to choose an easier contract; fix the underlying
-  capability when naturally required by scope, otherwise ask before changing the contract
+- Before editing, locate the target repository, read applicable `AGENTS.md`, inspect `git status --short`, and establish
+  ownership. Treat existing changes as user-owned. Use explicit paths or `cd` when tool cwd differs from the task target.
+- Inspect only instructions on the target-to-root path and task-relevant files; widen searches only for a concrete need.
+- Never discard, overwrite, stage, commit, publish, or mix user-owned changes without explicit permission. Prefer tracked
+  files; create files only in the intended repository.
+- Follow the user's approach. Choose the simplest maintainable general solution satisfying the full invariant, not the
+  quickest delivery, smallest diff, or symptom-specific patch. Remove needless wrappers, abstractions, duplication, and
+  fixture churn; prefer readable one-liners, not compressed complexity.
 - Preserve requested content, comments, dependencies, platform support, validation, recovery, compatibility, fallbacks,
-  and safety behavior unless removal is requested or evidence proves it unnecessary
-- If the authorized result cannot be produced safely and exactly, stop with the blocker instead of declaring a
-  workaround complete
+  and safety paths unless removal is requested or diagnostics prove them unnecessary.
+- Verify facts with diagnostics; never invent sourced facts or unavailable data. Emit exactly the requested schema/data;
+  edit generated sources rather than generated outputs.
+- Use repository commands, scripts, presets, and formatters as documented; investigate failures rather than bypassing them.
 
-## Repository changes
+## Validation and completion
 
-- Before editing, identify the repository root, read applicable `AGENTS.md`, inspect `git status --short`, verify target
-  ownership, and treat existing changes as user-owned unless proved otherwise
-- Do not run broad workspace reconnaissance as a generic preflight. Once the working directory and task target are known,
-  inspect only the path to the repository root, applicable instructions on that path, and task-relevant files; reserve
-  wider file listings or parent-directory scans for a concrete need discovered during the task.
-- Never discard, overwrite, stage, commit, publish, or mix user-owned changes; prefer tracked files and create files
-  only inside the intended repository
-- Follow the user's explicit approach; prefer the simplest maintainable general solution satisfying the full invariant
-  over delivery speed, a smaller diff, or symptom-specific patches
-- Keep production code as small as scope, correctness, coverage, compatibility, and maintainability allow; remove
-  needless wrappers, abstractions, duplication, and fixture churn
-- Do not invent source-backed facts or unavailable data; emit only the requested schema/data and change generated
-  sources rather than generated files
-- Preserve validation, recovery, compatibility, and safety paths unless removal is requested or diagnostics prove them
-  unreachable and unnecessary
-- Use repository commands, scripts, presets, and formatters as their contract; investigate failures instead of replacing
-  or bypassing documented workflows
-- Verify facts with diagnostics before explaining them
+- For code changes, add meaningful behavior tests covering relevant boundaries, negative paths, state combinations, and
+  adjacent regressions. Validate touched files and exact behavior on the target revision, not just command exit status.
+- Fix failures caused by touched files. Call a failure pre-existing only after reproducing it on the base revision.
+- For CI, release, platform, build, visual, data, media, or live-site changes, load the matching skill and run the real
+  workflow, or report the exact unverified path.
+- Review the final diff for contract compliance, correctness, simpler structure, and unnecessary machinery.
+- Commit only assistant-made validated changes before the final response when tracked files changed, unless commits are
+  forbidden, work is read-only, ownership is ambiguous, or assistant-caused validation fails.
+- Use atomic conventional commits. Before each commit inspect `git status --short` and `git diff --cached --name-status`;
+  abort for unrelated/user-owned staged paths unless explicitly authorized as a separate checkpoint. Use `build` for
+  build systems, dependencies, packaging, and artifact export; `chore` is maintenance outside those workflows.
+- Never use discard-style commands on tracked files without explicit permission for those exact paths. Before amend or
+  force-push, verify `HEAD` and staged paths.
+- Report exact validation evidence and residual blockers; do not claim unobserved runtime, deployment, or live success.
+- After each task run `~/.local/bin/notify --id "$PWD" "{{Korean title}}" "{{Korean summary with actual result}}"` from the
+  task directory; add `--click "$URL"` for an important URL.
 
-## Validation
+## Tools and style
 
-- Add meaningful behavior tests when code changes; cover relevant boundaries, negative paths, state combinations, and
-  adjacent regressions
-- Validate the exact changed behavior and touched files using the target source/revision; observable results matter more
-  than successful command exits
-- Fix failures caused by touched files before completion; do not call failures pre-existing without proving them on the
-  base revision
-- For CI, release, platform, build, visual, data, media, and live-site changes, load the matching skill and run the
-  corresponding real workflow or report the exact unverified path
-- Review the final diff for contract compliance, correctness, simpler structure, and unnecessary machinery before
-  accepting it
-
-## Git and completion
-
-- After finishing task, commit only your changes
-- If tracked files change, commit only assistant-made validated changes before the final response unless commits are
-  forbidden, the task is read-only, ownership is ambiguous, or assistant-caused validation fails
-- Use atomic conventional commits; before each commit inspect `git status --short` and
-  `git diff --cached --name-status`, and abort if unrelated/user-owned paths are staged
-- For conventional commit types, use `build` for changes that affect build systems, dependencies, packaging, or
-  artifact export; reserve `chore` for maintenance outside those workflows
-- Never use discard-style commands on tracked files unless the user explicitly requests those exact paths
-- Before amend or force-push, verify `HEAD` and inspect staged paths
-- State exact validation evidence and residual blockers; do not claim runtime, deployment, or live success beyond what
-  was observed
-- After each task run `~/.local/bin/notify --id "$PWD" "{{Korean title}}" "{{Korean summary with the actual result}}"`;
-  add `--click "$URL"` for an important URL
-
-## Local tools and conventions
-
-- Before installing or cloning a tool, check its canonical invocation and built-in discovery path, including Git and
-  package-manager subcommands; do not rely only on `command -v` for the bare tool name
-- For worktrees, use the installed `git-gtr` through `git gtr`; run `git gtr version` before considering installation or
-  cloning another copy
-- Prefer `xh` for web requests, `rg --heading`/`fd`/`fzf` for search, `gh` for GitHub, and `playwright-cli` for browser
-  validation
-- Use task-scoped commands; exit code 0 with no output means completion
-- This machine uses fish, so avoid Bash-only quoting and heredocs; use `--body-file` for multiline GitHub text
-- Do not launch subagents, including reviewers, for routine narrowly scoped work merely to increase confidence; use
-  direct inspection and validation instead. Delegate only when the user explicitly requests it or independent review is
-  required by the task's stated acceptance, risk, or scope.
-- When the user explicitly requests subagents, delegate substantive planning or implementation before doing direct
-  implementation work
-- Follow YAGNI principles, and prefer one-liner solutions
-- Prefer functional style, TypeScript options objects for three or more arguments, C++ structs, single-line arrow
-  functions when readable, and compact YAML maps/lists unless repository conventions differ
+- Before installing/cloning a tool, check its canonical invocation and built-in discovery, including Git/package-manager
+  subcommands, not only bare `command -v`. For worktrees run `git gtr version` and use installed `git gtr` first.
+- Prefer `xh` for web requests, `rg --heading`/`fd`/`fzf` for search, `gh` for GitHub, and `playwright-cli` for browser checks.
+- Use task-scoped commands. Exit 0 with no output means the command completed, not that observable behavior was verified.
+- This machine uses fish: avoid Bash-only quoting and heredocs; use `--body-file` for multiline GitHub text.
+- Delegate only when explicitly requested or independent review is required by the task's acceptance, risk, or scope;
+  not for routine confidence checks. If requested, delegate substantive planning or implementation before implementing.
+- Prefer functional style, TypeScript options objects for three or more arguments, C++ structs, readable single-line arrow
+  functions, and compact YAML maps/lists unless repository conventions differ.

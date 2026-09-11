@@ -1,0 +1,129 @@
+{
+  "evaluatedAt": "2026-09-11T15:43:59.373Z",
+  "sdkVersion": "0.85.1",
+  "scope": "SDK system prompt: Pi built-ins + global AGENTS + discovered skill descriptions; excludes extension instructions and tool schemas",
+  "reasoning": "medium",
+  "skills": 18,
+  "variants": [
+    {
+      "revision": "b56ae7a",
+      "promptSha256": "951329fb871e775a89819bed4c913a4909c8166ece991a871c5a4f4746ee857f",
+      "policyBytes": 7235,
+      "globalPromptBytes": 16626,
+      "evaluations": [
+        {
+          "model": "gpt-6-astra",
+          "checks": 14,
+          "failed": [],
+          "answer": {
+            "decisions": {
+              "read-only": 1,
+              "clear-task": 1,
+              "contract": 1,
+              "checkpoint": 1,
+              "staged": 1,
+              "test-failure": 0,
+              "generation": 1,
+              "delegation": 0,
+              "explicit-delegation": 1,
+              "skill-trigger": 1,
+              "evidence": 0,
+              "permission": 0
+            },
+            "negativeAnswer": "네, 파일을 바꾸지 않았습니다.",
+            "payload": [
+              1,
+              2
+            ]
+          }
+        },
+        {
+          "model": "gpt-5.6-terra",
+          "checks": 14,
+          "failed": [],
+          "answer": {
+            "decisions": {
+              "read-only": 1,
+              "clear-task": 1,
+              "contract": 1,
+              "checkpoint": 1,
+              "staged": 1,
+              "test-failure": 0,
+              "generation": 1,
+              "delegation": 0,
+              "explicit-delegation": 1,
+              "skill-trigger": 1,
+              "evidence": 0,
+              "permission": 0
+            },
+            "negativeAnswer": "네, 파일을 바꾸지 않았습니다.",
+            "payload": [
+              1,
+              2
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "revision": "working-tree",
+      "promptSha256": "f8d249bdf08ae65c10fac59de7b2e20ebda185693c2f417c8b313a2b0a4fab2d",
+      "policyBytes": 5706,
+      "globalPromptBytes": 15090,
+      "evaluations": [
+        {
+          "model": "gpt-6-astra",
+          "checks": 14,
+          "failed": [],
+          "answer": {
+            "decisions": {
+              "read-only": 1,
+              "clear-task": 1,
+              "contract": 1,
+              "checkpoint": 1,
+              "staged": 1,
+              "test-failure": 0,
+              "generation": 1,
+              "delegation": 0,
+              "explicit-delegation": 1,
+              "skill-trigger": 1,
+              "evidence": 0,
+              "permission": 0
+            },
+            "negativeAnswer": "네, 파일을 바꾸지 않았습니다.",
+            "payload": [
+              1,
+              2
+            ]
+          }
+        },
+        {
+          "model": "gpt-5.6-terra",
+          "checks": 14,
+          "failed": [],
+          "answer": {
+            "decisions": {
+              "read-only": 1,
+              "clear-task": 1,
+              "contract": 1,
+              "checkpoint": 1,
+              "staged": 1,
+              "test-failure": 0,
+              "generation": 1,
+              "delegation": 0,
+              "explicit-delegation": 1,
+              "skill-trigger": 1,
+              "evidence": 0,
+              "permission": 0
+            },
+            "negativeAnswer": "네, 파일을 바꾸지 않았습니다.",
+            "payload": [
+              1,
+              2
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.85.1",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-terra",
+  "defaultModel": "gpt-6-astra",
   "hideThinkingBlock": true,
   "defaultThinkingLevel": "medium",
   "enabledModels": [
@@ -13,7 +13,6 @@
     "openai-codex/gpt-5.6-luna"
   ],
   "packages": [
-    "../../../repo/etc/assisted-by",
     "git:https://github.com/scarf005/assisted-by",
     "npm:@alexanderfortin/pi-token-usage",
     "../../../repo/assisted-by",

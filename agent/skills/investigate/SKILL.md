@@ -1,11 +1,12 @@
 ---
 name: investigate
-description: Use when the user asks to investigate, analyze, diagnose, research, or explain an issue before fixing it; when they want plan-mode-style read-only exploration; or when they ask for related issues/PRs and fix options with pros and cons.
+description: Read-only diagnosis of concrete bugs/incidents, explicit plan-mode exploration, or related issue/PR and fix-option research. Not for ordinary explanations, factual lookups, or routine inspection during authorized implementation.
 ---
 
 # Investigate
 
-Use this skill for read-only diagnosis and solution exploration. It is a planning/investigation workflow, not an implementation workflow.
+Use this skill for read-only diagnosis and solution exploration, not implementation. Ordinary explanations, local fact
+lookups, and inspection within an authorized coding task do not trigger this workflow.
 
 ## Safety Gate
 
