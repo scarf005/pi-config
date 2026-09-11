@@ -73,6 +73,8 @@
   forbidden, the task is read-only, ownership is ambiguous, or assistant-caused validation fails
 - Use atomic conventional commits; before each commit inspect `git status --short` and
   `git diff --cached --name-status`, and abort if unrelated/user-owned paths are staged
+- For conventional commit types, use `build` for changes that affect build systems, dependencies, packaging, or
+  artifact export; reserve `chore` for maintenance outside those workflows
 - Never use discard-style commands on tracked files unless the user explicitly requests those exact paths
 - Before amend or force-push, verify `HEAD` and inspect staged paths
 - State exact validation evidence and residual blockers; do not claim runtime, deployment, or live success beyond what
