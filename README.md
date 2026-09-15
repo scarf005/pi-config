@@ -40,6 +40,30 @@ validation claims, generation, delegation, skill selection, Korean negative answ
 This is a single batched decision smoke test per model/revision, not an end-to-end tool-use, speed, or coding-quality benchmark.
 Other enabled models were not live-tested. Re-run after policy or SDK changes; installed resources affect prompt size.
 
+## Subagents
+
+[Settings](agent/settings.json) load `@parke.dev/pi-subagent@0.8.0` instead of `pi-subagents`.
+Restart Pi or use `/reload` after changing packages; already-running sessions retain their loaded tools until then.
+
+[Agent definitions](agent/agents) preserve the configured models, thinking levels, and Terra fallback:
+`planner` uses the explore profile, `oracle` and `reviewer` use review, and `worker` uses general.
+Explore/review agents have only read/grep/find/ls. The parent supplies git diffs and runs validation commands.
+Workers retain bash/edit/write. All four personas disable further delegation and have a 30-minute timeout.
+
+Use `subagent { action: "status" }` for the catalog, `tasks` for parallel work, and `async: true` with
+`subagent_wait { id }` for background work. Sequential stages use separate calls, not the old `chain` parameter.
+Pass `context: "fork"` explicitly when a single child needs the parent conversation; use `resume` for a child session.
+The old supervisor/intercom bridge is not carried over: children return blockers, and the parent can resume them.
+Existing Nico transcripts remain on disk; its run IDs are not migrated to the new inspector.
+
+```sh
+PI_OFFLINE=1 node tests/subagent.mjs        # SDK loading, personas, and permission guards; no model calls
+PI_OFFLINE=1 node tests/subagent.mjs --live # Real parallel children, background wait, and session resume
+```
+
+The live smoke test uses disposable data and existing model authentication. It does not exercise worktree
+apply/discard, interactive rendering, or provider-failure retries.
+
 ## Godot MCP + isolated computer-use (game desktop)
 
 Launches a dedicated Xvfb display, session DBus and AT-SPI accessibility bus,

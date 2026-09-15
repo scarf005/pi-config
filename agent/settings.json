@@ -21,7 +21,7 @@
       "skills": []
     },
     "../../../repo/etc/one-time-contribution/dot314/extensions/move-session.ts",
-    "npm:pi-subagents",
+    "npm:@parke.dev/pi-subagent@0.8.0",
     "npm:pi-web-access",
     "npm:pi-simplify",
     "../../../repo/assisted-by/packages/gh-title-body-guard",
@@ -33,37 +33,5 @@
     }
   ],
   "defaultProjectTrust": "always",
-  "theme": "dark",
-  "subagents": {
-    "agentOverrides": {
-      "planner": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-terra"
-        ],
-        "thinking": "high"
-      },
-      "oracle": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-terra"
-        ],
-        "thinking": "high"
-      },
-      "reviewer": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-terra"
-        ],
-        "thinking": "low"
-      },
-      "worker": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-terra"
-        ],
-        "thinking": "high"
-      }
-    }
-  }
+  "theme": "dark"
 }
