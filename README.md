@@ -84,6 +84,14 @@ cache.
 (`PI_GAME_DESKTOP=1` with a real `DISPLAY` and session DBus). This marker guard
 is advisory only, not a security sandbox.
 
+### Implementation
+
+- `bin/game-desktop` owns the private runtime directory, environment, display-selection lock, and process-group teardown.
+- `libexec/game-desktop/supervisor.sh` starts Xvfb and session DBus inside that process group.
+- `libexec/game-desktop/session.sh` starts and stops the window manager and accessibility helpers around the command.
+
+The `libexec` scripts are internal entry points invoked by the launcher, not standalone commands.
+
 ### Validation
 
 ```sh

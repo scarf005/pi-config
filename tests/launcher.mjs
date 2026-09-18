@@ -97,16 +97,39 @@ const launchAndSignal = (signal) => new Promise((resolve, reject) => {
   });
 });
 
-// 1. godot-mcp rejects outside the isolated desktop (guard, not message detail).
-const rejected = run(bin("godot-mcp"), [], { env: hostEnv });
-assert.equal(rejected.status, 1, "godot-mcp must exit 1 outside the isolated desktop");
-assert.match(rejected.stderr, /isolated desktop/);
-console.log("PASS: bin/godot-mcp rejects launch outside the isolated desktop");
+// 1. Every part of the advisory isolated-desktop guard is required.
+for (const overrides of [{}, { PI_GAME_DESKTOP: "1", DISPLAY: "" }, { PI_GAME_DESKTOP: "1", DBUS_SESSION_BUS_ADDRESS: "" }]) {
+  const rejected = run(bin("godot-mcp"), [], { env: { ...hostEnv, ...overrides } });
+  assert.equal(rejected.status, 1, "godot-mcp must exit 1 outside the isolated desktop");
+  assert.match(rejected.stderr, /isolated desktop/);
+}
+console.log("PASS: bin/godot-mcp rejects missing desktop marker, display or session bus");
 
-// 2. Exit code from the inner command propagates through game-desktop.
+// 2. Usage and command failures preserve their distinct exit codes.
+const usage = run(bin("game-desktop"), [], { env: hostEnv });
+assert.equal(usage.status, 2);
+assert.match(usage.stderr, /Usage: game-desktop/);
 const propagated = run(bin("game-desktop"), ["sh", "-c", "exit 7"], { env: hostEnv });
 assert.equal(propagated.status, 7, `game-desktop must propagate inner exit code 7, got ${propagated.status}`);
-console.log("PASS: bin/game-desktop propagates the inner command exit code");
+const missing = run(bin("game-desktop"), ["sh", "-c", 'printf "RUNTIME=%s\\n" "$XDG_RUNTIME_DIR"; exec "$XDG_RUNTIME_DIR/missing-command"'], { env: hostEnv });
+assert.equal(missing.status, 127, missing.stderr);
+assert.equal(await waitForGone(assignments(missing.stdout).RUNTIME), true, "missing command left runtime resources");
+console.log("PASS: game-desktop preserves usage and command failure statuses and cleans up");
+
+// Arguments, stdin and caller cwd survive every shell boundary unchanged.
+const commandArgs = ["", "two words", "quote'\"", "$HOME; $(false) *", "line\nbreak", "--flag", "한글"];
+const input = "piped input\nsecond line\n";
+const forwarded = run(bin("game-desktop"), [process.execPath, "-e", `
+  const fs = require("node:fs");
+  console.log("FORWARDED=" + JSON.stringify({ args: process.argv.slice(1), cwd: process.cwd(), input: fs.readFileSync(0, "utf8"), runtime: process.env.XDG_RUNTIME_DIR }));
+`, "--", ...commandArgs], { cwd: "/tmp", env: hostEnv, input });
+assert.equal(forwarded.status, 0, forwarded.stderr);
+const forwardedFields = JSON.parse(assignments(forwarded.stdout).FORWARDED);
+assert.deepEqual(forwardedFields.args, commandArgs);
+assert.equal(forwardedFields.cwd, "/tmp");
+assert.equal(forwardedFields.input, input);
+assert.equal(await waitForGone(forwardedFields.runtime), true);
+console.log("PASS: game-desktop preserves exact arguments, piped stdin and caller cwd");
 
 // 3. Explicit inherited sentinels are replaced, accessibility stays private,
 // and both the runtime directory and X authority file are removed.

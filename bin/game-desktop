@@ -120,52 +120,6 @@ export PI_COMPUTER_USE_CURSOR_OVERLAY=0
 export NO_AT_BRIDGE=0
 
 touch "$runtime/Xauthority"
-child_script="$runtime/child.sh"
-cat > "$child_script" <<'CHILD_SCRIPT'
-#!/bin/sh
-set -eu
-
-pidfile=$1
-shift
-printf '%s\n' "$$" > "$pidfile"
-
-xvfb-run -a --auth-file="$XDG_RUNTIME_DIR/Xauthority" \
-    --server-args="-screen 0 1600x900x24 -auth $XDG_RUNTIME_DIR/Xauthority" \
-    sh -ec 'flock -u 9; exec "$@"' sh \
-    dbus-run-session -- sh -ec '
-        helpers=
-        cleanup_helpers() {
-            status=$?
-            trap - EXIT INT TERM
-            for helper in $helpers; do
-                kill -TERM "$helper" 2>/dev/null || :
-            done
-            for helper in $helpers; do
-                wait "$helper" 2>/dev/null || :
-            done
-            exit "$status"
-        }
-        trap cleanup_helpers EXIT
-        trap "exit 130" INT
-        trap "exit 143" TERM
-        openbox --sm-disable >"$XDG_RUNTIME_DIR/openbox.log" 2>&1 &
-        helpers="$helpers $!"
-        /usr/libexec/at-spi-bus-launcher --launch-immediately --a11y=1 --screen-reader=1 >"$XDG_RUNTIME_DIR/accessibility.log" 2>&1 &
-        helpers="$helpers $!"
-        gdbus wait --session --timeout 10 org.a11y.Bus
-        AT_SPI_BUS_ADDRESS=$(gdbus call --session --dest org.a11y.Bus --object-path /org/a11y/bus --method org.a11y.Bus.GetAddress | python3 -c "import ast,sys; print(ast.literal_eval(sys.stdin.read())[0])")
-        export AT_SPI_BUS_ADDRESS
-        /usr/libexec/at-spi2-registryd >"$XDG_RUNTIME_DIR/registry.log" 2>&1 &
-        helpers="$helpers $!"
-        gdbus wait --address "$AT_SPI_BUS_ADDRESS" --timeout 10 org.a11y.atspi.Registry
-        set +e
-        "$@"
-        status=$?
-        set -e
-        exit "$status"
-    ' sh "$@"
-CHILD_SCRIPT
-chmod 700 "$child_script"
 
 # Serialize only automatic display-number selection; the child releases this
 # inherited lock once xvfb-run has started its X server.
@@ -174,7 +128,7 @@ flock 9
 
 # setsid creates a new session/process group, while --wait lets the parent
 # reap the supervisor and preserve the command status.
-setsid --wait "$child_script" "$child_pidfile" "$@" <&0 &
+setsid --wait sh "$config_dir/libexec/game-desktop/supervisor.sh" "$child_pidfile" "$@" <&0 &
 child_pid=$!
 attempt=0
 while [ ! -s "$child_pidfile" ] && kill -0 "$child_pid" 2>/dev/null; do
