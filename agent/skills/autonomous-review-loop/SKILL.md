@@ -12,10 +12,17 @@ coordination. The goal is the requested result, not a clean review queue.
 
 ## Establish observable acceptance
 
-- Read the exact request, targets and supplied references before planning. Keep
-  a compact acceptance ledger: each requested outcome, representative scenario,
-  pass condition, required evidence, and status (unverified, verified, blocked).
-  Include constraints, non-goals and the authorized publication boundary.
+- Read the exact request, targets and supplied references before planning. For
+  multi-step work, maintain one short worktree-local state document: reuse the
+  task's existing plan, otherwise use `progress.md` without committing it unless
+  requested. Record authorized scope and publication boundary, decided/rejected/
+  open choices, each outcome's scenario, pass condition, evidence and status
+  (unverified, verified, blocked), and the next action. The agent maintains it;
+  do not ask the user to fill a template or create one for a trivial edit.
+- Update that document when a decision, evidence or status changes, not after
+  every tool call. Read it on continuation or after compaction and pass its path
+  to delegates; verify it against current user instructions and revision before
+  acting. It preserves context, not permission to revive an unrelated old task.
 - Derive pass conditions from the user's desired result, not from the code you
   chose to implement. Do not silently replace an outcome with a helper, class,
   mechanism, smaller scope or conveniently passing fixture.
@@ -83,6 +90,8 @@ coordination. The goal is the requested result, not a clean review queue.
    a different goal or add unnecessary machinery.
 3. Rerun affected checks on the changed revision and update the acceptance
    ledger. Repair branch-owned CI failures and merge conflicts within scope.
+   Reproduce a suspected unrelated CI failure on the base before attributing it;
+   do not alter runners, limits or dependencies merely to make unrelated CI green.
    Check sibling paths for the same demonstrated failure class.
 4. Re-review only to verify an actionable fix, a material new change, or a named
    uncovered acceptance/risk question. State which gap the next review closes.

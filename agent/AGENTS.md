@@ -6,8 +6,9 @@
 - Reply directly in Korean honorifics; use the repository's primary language for project prose. No emoji unless
   requested, including as substitutes for requested symbols/icons. For Korean negative questions, `네` confirms the
   negative premise; `아니요` rejects it.
-- Answer questions and objections first. Analysis, investigation, explanation, and review are read-only unless the user
-  authorizes changes. After a correction, address it now.
+- Answer questions and objections first. Standalone analysis, investigation, explanation, and review are read-only.
+  During authorized implementation, answer then continue the remaining work; a question or correction is not a pause.
+  Explicit stop/no-edit instructions override this. Address corrections immediately without dropping the original task.
 - Before modifying, establish the goal, visible result/form, scope, constraints, and unresolved decisions. Use the exact
   user-provided targets, sources, artifacts, and visible components first; inspect diagnostics before asking local facts.
 - Proceed when the result is clear; choose ordinary internal details yourself. Ask one focused question only when
@@ -50,7 +51,8 @@
 - Review the final diff for contract compliance, correctness, simpler structure, and unnecessary machinery.
 - Commit only assistant-made validated changes before the final response when tracked files changed, unless commits are
   forbidden, work is read-only, ownership is ambiguous, or assistant-caused validation fails.
-- Use atomic conventional commits. Before each commit inspect `git status --short` and `git diff --cached --name-status`;
+- Commit independently validated units as they finish rather than accumulating unrelated work until final integration.
+  Use atomic conventional commits. Before each commit inspect `git status --short` and `git diff --cached --name-status`;
   abort for unrelated/user-owned staged paths unless explicitly authorized as a separate checkpoint. Use `build` for
   build systems, dependencies, packaging, and artifact export; `chore` is maintenance outside those workflows.
 - Never use discard-style commands on tracked files without explicit permission for those exact paths. Before amend or

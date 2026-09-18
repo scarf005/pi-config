@@ -17,7 +17,7 @@
     "npm:@alexanderfortin/pi-token-usage",
     "../../../repo/assisted-by",
     {
-      "source": "npm:pi-ask-user",
+      "source": "../../../repo/etc/one-time-contribution/pi-ask-user-worktrees/fix-decision-gates",
       "skills": []
     },
     "../../../repo/etc/one-time-contribution/dot314/extensions/move-session.ts",
