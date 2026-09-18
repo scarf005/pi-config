@@ -7,7 +7,7 @@
   requested, including as substitutes for requested symbols/icons. For Korean negative questions, `네` confirms the
   negative premise; `아니요` rejects it.
 - Answer questions and objections first. Analysis, investigation, explanation, and review are read-only unless the user
-  authorizes changes. After a correction, address it now and load `agent-policy-updates` before considering policy edits.
+  authorizes changes. After a correction, address it now.
 - Before modifying, establish the goal, visible result/form, scope, constraints, and unresolved decisions. Use the exact
   user-provided targets, sources, artifacts, and visible components first; inspect diagnostics before asking local facts.
 - Proceed when the result is clear; choose ordinary internal details yourself. Ask one focused question only when
@@ -16,6 +16,8 @@
 - Preserve the requested contract: do not silently narrow, broaden, substitute, wrap, hard-code, move call sites, or
   change output form to ease implementation. Fix an underlying limitation when in scope; otherwise ask. If the exact
   authorized result is blocked, report the blocker rather than declaring a workaround complete.
+- Mod ports include the minimal host-engine support needed to preserve their behavior. Make required engine changes in
+  a new worktree without asking again for scope permission; keep unrelated engine changes out of scope.
 - Redact credentials, tokens, secrets, headers, action-token URLs, and sensitive payloads from output.
 
 ## Implementation
@@ -30,8 +32,11 @@
   fixture churn; prefer readable one-liners, not compressed complexity.
 - Preserve requested content, comments, dependencies, platform support, validation, recovery, compatibility, fallbacks,
   and safety paths unless removal is requested or diagnostics prove them unnecessary.
-- Verify facts with diagnostics; never invent sourced facts or unavailable data. Emit exactly the requested schema/data;
-  edit generated sources rather than generated outputs.
+- Verify facts with diagnostics; never invent sourced facts or unavailable data. For reviews, verify that the trigger
+  is reachable in normal supported use, or identify the input-validation/security contract requiring it to be handled.
+  Establish concrete impact and evidence that the reviewed change introduced the problem. Distinguish optional
+  hardening against artificially corrupted state from normal-use regressions before proposing fixes or tests.
+  Emit exactly the requested schema/data; edit generated sources rather than generated outputs.
 - Use repository commands, scripts, presets, and formatters as documented; investigate failures rather than bypassing them.
 
 ## Validation and completion

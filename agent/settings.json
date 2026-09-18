@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.85.1",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6-astra",
-  "hideThinkingBlock": true,
+  "hideThinkingBlock": false,
   "defaultThinkingLevel": "medium",
   "enabledModels": [
     "deepseek/deepseek-v4-flash",
@@ -33,5 +33,6 @@
     }
   ],
   "defaultProjectTrust": "always",
+  "tuiMode": "fullscreen",
   "theme": "dark"
 }

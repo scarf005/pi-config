@@ -1,6 +1,5 @@
 # Pi configuration repository
 
-- Before editing agent policy, load `agent-policy-updates`
 - Before creating, moving, or adding files inside a skill directory, read Pi's complete `docs/skills.md`
 - Before changing Pi resources or SDK integrations, read the relevant Pi docs completely and follow task-relevant
   cross-references/examples; do not recursively load unrelated documentation
