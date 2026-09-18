@@ -4,6 +4,21 @@ Personal pi coding agent configuration.
 
 SPDX-License-Identifier: AGPL-3.0-only
 
+## Maintenance
+
+- `agent/` contains settings, agent personas, and task-triggered skills; installed packages and runtime state are not source.
+- `bin/` contains user-facing launchers; `libexec/` contains their internal lifecycle scripts.
+- `tests/support.mjs` shares repository paths, lazy SDK loading, and tool invocation across SDK checks. Keep resource loading
+  and session setup in each test so their different discovery and permission boundaries remain explicit.
+- `tests/policy-cases.mjs` contains decision scenarios; `tests/policy.mjs` assembles prompts and evaluates responses.
+
+```sh
+node --test tests/support.test.mjs # Shared helpers and scenario integrity; no model calls
+```
+
+Launcher, SDK, and optional live validation commands are listed with their features below. SDK checks use the globally
+installed Pi SDK (`npm root -g`) and the packages installed under `agent/npm`.
+
 ## GPT profile
 
 [Settings](agent/settings.json) start new sessions with `openai-codex/gpt-6-astra` and medium thinking.

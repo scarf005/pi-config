@@ -3,8 +3,8 @@ import { execFileSync } from "node:child_process";
 import { mkdtemp, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { join } from "node:path";
+import { agentDir, createToolCaller, loadSdk, root as config, textContent as text } from "./support.mjs";
 
 assert.equal(process.env.PI_GAME_DESKTOP, "1", "Run through bin/game-desktop");
 assert.equal(process.env.WAYLAND_DISPLAY, undefined);
@@ -12,18 +12,13 @@ assert.ok(process.env.AT_SPI_BUS_ADDRESS.includes(process.env.XDG_RUNTIME_DIR));
 assert.equal(process.env.XDG_SESSION_TYPE, "x11");
 assert.match(execFileSync("xdpyinfo", { encoding: "utf8" }), /1600x900 pixels/);
 
-const config = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const agentDir = join(config, "agent");
 const modules = join(agentDir, "npm/node_modules");
 process.env.PI_CODING_AGENT_DIR = agentDir;
 process.env.PI_COMPUTER_USE_LINUX_HELPER_PATH = join(agentDir, "bin/computer-use-linux-bridge");
 // Mirror bin/pi-game wiring: the managed browser runs through bin/pi-chrome,
 // which adds --enable-unsafe-swiftshader for WebGL2 on the GPU-less display.
 process.env.PI_COMPUTER_USE_CHROME_EXECUTABLE = join(config, "bin", "pi-chrome");
-const globalModules = execFileSync("npm", ["root", "-g"], { encoding: "utf8" }).trim();
-const { createAgentSession, DefaultResourceLoader, SessionManager, SettingsManager } = await import(
-  pathToFileURL(join(globalModules, "@earendil-works/pi-coding-agent/dist/index.js"))
-);
+const { createAgentSession, DefaultResourceLoader, SessionManager, SettingsManager } = await loadSdk();
 const settingsManager = SettingsManager.inMemory({ packages: [], retry: { enabled: false } });
 const loader = new DefaultResourceLoader({
   cwd: config,
@@ -41,14 +36,7 @@ const { session } = await createAgentSession({
   sessionManager: SessionManager.inMemory(config),
 });
 await session.bindExtensions({ mode: "print" });
-const call = async (name, args) => {
-  const tool = session.agent.state.tools.find((tool) => tool.name === name);
-  assert.ok(tool, `Tool registered: ${name}`);
-  const result = await tool.execute(crypto.randomUUID(), args, AbortSignal.timeout(30000));
-  assert.ok(!result.isError, JSON.stringify(result));
-  return result;
-};
-const text = (result) => result.content.filter((block) => block.type === "text").map((block) => block.text).join("\n");
+const call = createToolCaller({ session, timeoutMs: 30000, assertSuccess: true });
 const mcp = async (tool, args = {}) => {
   const result = await call("mcp", { tool: `godot_${tool}`, args });
   assert.ok(!result.details?.mcpResult?.isError, text(result));

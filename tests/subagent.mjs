@@ -1,14 +1,11 @@
 // Installed package/SDK checks; --live also starts real read-only child processes.
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { mkdtempSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { join } from "node:path";
+import { agentDir, createToolCaller, loadSdk, root, sdkDir, textContent as text } from "./support.mjs";
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const agentDir = join(root, "agent");
 const live = process.argv.includes("--live");
 assert.ok(process.argv.slice(2).every((arg) => arg === "--live"));
 const artifacts = mkdtempSync(join(tmpdir(), "pi-subagent-test-"));
@@ -17,13 +14,9 @@ process.env.PI_SUBAGENT_SESSION_DIR = join(artifacts, "sessions");
 process.env.PI_SUBAGENT_WORKTREE_DIR = join(artifacts, "worktrees");
 process.env.PI_SUBAGENT_LOCK_DIR = join(artifacts, "locks");
 process.env.PI_SUBAGENT_NOTIFICATIONS = "off";
-const globalModules = execFileSync("npm", ["root", "-g"], { encoding: "utf8" }).trim();
-const host = join(globalModules, "@earendil-works/pi-coding-agent");
 // SDK hosts have their own argv[1]; pin the real CLI rather than respawning this test.
-process.env.PI_SUBAGENT_BIN = realpathSync(join(host, "dist/cli.js"));
-const { createAgentSession, DefaultResourceLoader, ModelRuntime, parseFrontmatter, SessionManager, SettingsManager } = await import(
-  pathToFileURL(join(host, "dist/index.js"))
-);
+process.env.PI_SUBAGENT_BIN = realpathSync(join(sdkDir, "dist/cli.js"));
+const { createAgentSession, DefaultResourceLoader, ModelRuntime, parseFrontmatter, SessionManager, SettingsManager } = await loadSdk();
 const settings = JSON.parse(readFileSync(join(agentDir, "settings.json"), "utf8"));
 const source = (pkg) => typeof pkg === "string" ? pkg : pkg.source;
 assert.ok(settings.packages.some((pkg) => source(pkg).startsWith("npm:@parke.dev/pi-subagent@")));
@@ -43,12 +36,7 @@ const { session } = await createAgentSession({
   cwd: root, agentDir, settingsManager, resourceLoader: loader, modelRuntime: runtime,
   sessionManager: SessionManager.inMemory(root),
 });
-const call = async (name, args) => {
-  const tool = session.agent.state.tools.find((entry) => entry.name === name);
-  assert.ok(tool, `Registered tool: ${name}`);
-  return tool.execute(randomUUID(), args, AbortSignal.timeout(180000));
-};
-const text = (result) => result.content.filter((block) => block.type === "text").map((block) => block.text).join("\n");
+const call = createToolCaller({ session, timeoutMs: 180000 });
 const readOnly = ["read", "grep", "find", "ls"];
 try {
   await session.bindExtensions({ mode: "print" });
