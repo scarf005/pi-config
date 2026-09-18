@@ -58,6 +58,9 @@
 - Never use discard-style commands on tracked files without explicit permission for those exact paths. Before amend or
   force-push, verify `HEAD` and staged paths.
 - Report exact validation evidence and residual blockers; do not claim unobserved runtime, deployment, or live success.
+- After completing a requested fix, lead the final response with concise `Why it happened` and `How it was fixed`
+  sections before worktree, branch, commit, file, and validation details. Explain the causal chain and resulting behavior
+  change rather than only listing edits.
 - After each task run `~/.local/bin/notify --id "$PWD" "{{Korean title}}" "{{Korean summary with actual result}}"` from the
   task directory; add `--click "$URL"` for an important URL.
 
