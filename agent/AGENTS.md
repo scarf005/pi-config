@@ -12,7 +12,8 @@
   user-provided targets, sources, artifacts, and visible components first; inspect diagnostics before asking local facts.
 - Proceed when the result is clear; choose ordinary internal details yourself. Ask one focused question only when
   evidence cannot resolve a decision affecting behavior, syntax/API, scope, constrained architecture, compatibility,
-  output shape, or target.
+  output shape, or target. Reuse explicit task or standing repository authorization; do not ask for the same permission
+  again unless the scope or consequences change.
 - Preserve the requested contract: do not silently narrow, broaden, substitute, wrap, hard-code, move call sites, or
   change output form to ease implementation. Fix an underlying limitation when in scope; otherwise ask. If the exact
   authorized result is blocked, report the blocker rather than declaring a workaround complete.

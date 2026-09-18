@@ -12,8 +12,9 @@ session; restart Pi to pick up the complete configuration. Transport, caching, r
 
 [Global rules](agent/AGENTS.md) retain the task contract, ownership, validation, and language preferences without
 repeated gates. The investigation skill excludes ordinary questions and routine implementation inspection.
-User-owned changes require permission before a separate checkpoint commit. A nonexistent local package entry was removed;
-installed extensions were not removed.
+In this repository, implementation starts by checkpointing existing tracked changes separately without asking again.
+This standing authorization excludes untracked/generated files and does not apply to other repositories or override an
+explicit no-commit request. A nonexistent local package entry was removed; installed extensions were not removed.
 
 ### Policy validation
 
