@@ -54,7 +54,42 @@ it excludes extension-added instructions and tool schemas. The evaluation also i
 Both Astra and Terra passed all 14 checks before and after: read-only scope, clarification, exact contracts, ownership,
 validation claims, generation, delegation, skill selection, Korean negative answers, and JSON values.
 This is a single batched decision smoke test per model/revision, not an end-to-end tool-use, speed, or coding-quality benchmark.
-Other enabled models were not live-tested. Re-run after policy or SDK changes; installed resources affect prompt size.
+Other enabled models were not live-tested. These are historical results, not measurements of the current prompt.
+Re-run after policy or SDK changes; installed resources affect prompt size.
+
+### Workflow regression checks
+
+```sh
+PI_OFFLINE=1 node tests/workflow.mjs                 # Loaded extension guidance and filesystem isolation; no model calls
+PI_OFFLINE=1 node tests/workflow.mjs --live          # Actual tool loops with the configured default
+PI_OFFLINE=1 node tests/workflow.mjs --live --matrix # Astra medium/high and Terra medium on the same cases
+# Add --case=ci-scope (repeatable) for a focused rerun.
+```
+
+[Cases](tests/workflow-cases.mjs) check ordinary choices versus missing user decisions, answering then continuing,
+explicit pauses, new-session handoff from `progress.md`, partial versus complete acceptance, CI scope, and reachable
+versus artificially corrupted-state regressions. The agent maintains the worktree-local state document for long tasks;
+users do not need to fill a template. Read-only reviewers require the actual diff, original request and inspectable
+validation evidence, and must name unverified scope instead of treating missing evidence as approval.
+
+The runner loads current extension guidance and reports the effective global prompt size plus serialized active tool
+schema size separately. Model loops use production read/ls/edit/write tools restricted to disposable files, the real
+ask-user schema with a simulated UI answer, and fixed repository checks. Reports and text/tool traces remain under
+`/tmp/pi/workflow-eval-*`; source hashes identify the evaluated revision. These are bounded behavior checks, not a coding
+quality benchmark, automatic-compaction test, interactive UI test, or real game/CI/reviewer execution. Model defaults
+remain unchanged; a small fixture comparison cannot establish a generally better model.
+
+[Recorded tool-use results](evals/workflow-results.json): Astra medium, Astra high and Terra medium each passed 10 outcome
+checks in one trial per case. Trace inspection also found 0, 1 and 6 unrelated validator attempts respectively; outcome
+passes do not mean every action was useful. Keep Astra medium rather than increasing reasoning globally. The measured
+startup global prompt, including active extension guidance, was **20,750 UTF-8 bytes**; serialized active tool definitions
+were **28,605 bytes** separately. Provider framing and per-turn hook changes are not included.
+
+`ask_user` loads patched **0.14.0 source** from
+`~/repo/etc/one-time-contribution/pi-ask-user-worktrees/fix-decision-gates`, based on upstream
+`2de7e145227f7a527e995e323a50e7ee9bf88b0e`, with local fix `8e00b35`. Keep this source checkout when using these settings.
+Like the other local packages, it must be provisioned on another machine; no installed `node_modules` file is patched. Its bundled skill
+remains disabled. Reload Pi or start a new session to load the corrected tool guidance.
 
 ## Subagents
 

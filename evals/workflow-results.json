@@ -1,0 +1,369 @@
+{
+  "evaluatedAt": "2026-09-18T03:25:18.258Z",
+  "sdkVersion": "0.85.1",
+  "scope": "Startup global rules + discovered skills + active extension instructions; fixture loops use production read/ls/edit/write and ask_user schema with a simulated UI answer. External CI/review/runtime observations are fixtures, not execution; new-session handoff is tested, automatic compaction and UI are not.",
+  "configRevision": "deda6caa16e3b7007c9ec5253b65aa28adb916f9",
+  "sourceSha256": {
+    "AGENTS.md": "829985727d90f69f9fa9a81387a218eeae34ad15a4bccf935259023975241543",
+    "agent/AGENTS.md": "a33bbf1bf1903a41fe59a3d3ceceaaacc6f187143e796572566c65d3ee42877e",
+    "agent/settings.json": "d8349396a1d67b6a7da3a5123abe3004bac203afe579bbefde279536a0fa0c87",
+    "agent/agents/reviewer.md": "cd49e18541540011d7578582e417cfcb216fe4786d8c8ba8ecdd90b0c1847a4d",
+    "agent/skills/autonomous-review-loop/SKILL.md": "0d6bffcc612aea1ce9a5bc3e5f3a4f79d6c800569a7b8382a606fca4a7e9e728",
+    "tests/workflow.mjs": "a8d4b030fef8acccc914395024b21ab1cff8e04c53ed6d57eb5ac97e94b6b73c",
+    "tests/workflow-cases.mjs": "0abdfa5dbfb30a2010bd21dec90b90b0e63ee5f391753071ceb840038c769f17",
+    "tests/support.mjs": "c5a043619966ad823742c9f13c2df58417f40865a0c5113b36c016d1ce030de6"
+  },
+  "askUserSource": "/home/scarf/repo/etc/one-time-contribution/pi-ask-user-worktrees/fix-decision-gates/index.ts",
+  "askUserSha256": "267ff73db315b7ab3c228a298d467295d61a609f4cd3b27e729f17b047156b79",
+  "globalPromptBytes": 20750,
+  "toolSchemaBytes": 28605,
+  "localChecks": "SDK extension guidance, real read/ls/edit/write boundary, failing/passing repository check, absolute/relative/symlink escape rejection",
+  "rawReportSha256": "8cabcd70e011a4d979316630ae7af5b652592776eb5b3cd80201f94f1ebc9883",
+  "limitations": "One trial per model/case. Outcome pass does not imply absence of unnecessary tool calls, broad coding quality, real CI/game validation, automatic-compaction correctness, or future reliability.",
+  "fixtureCorrection": "Initial CI scenario lacked a directory-listing tool, making evidence filenames undiscoverable. Added production ls and reran the full matrix; assertions were not relaxed.",
+  "runs": [
+    {
+      "model": "gpt-6-astra",
+      "thinking": "medium",
+      "case": "internal-choice",
+      "passed": true,
+      "failures": [],
+      "turns": 5,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "medium",
+      "case": "continue-after-question",
+      "passed": true,
+      "failures": [],
+      "turns": 5,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "medium",
+      "case": "handoff",
+      "passed": true,
+      "failures": [],
+      "turns": 6,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "medium",
+      "case": "explicit-pause",
+      "passed": true,
+      "failures": [],
+      "turns": 1,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "medium",
+      "case": "real-decision",
+      "passed": true,
+      "failures": [],
+      "turns": 6,
+      "asks": 1,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "medium",
+      "case": "partial-not-approval",
+      "passed": true,
+      "failures": [],
+      "turns": 4,
+      "asks": 0,
+      "promptSha256": "66a3a7ff8ca8d759f353ddbe6665f4acd3a5fbfd20638b25984c70ce31b34e06",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "medium",
+      "case": "acceptance-complete",
+      "passed": true,
+      "failures": [],
+      "turns": 4,
+      "asks": 0,
+      "promptSha256": "66a3a7ff8ca8d759f353ddbe6665f4acd3a5fbfd20638b25984c70ce31b34e06",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "medium",
+      "case": "ci-scope",
+      "passed": true,
+      "failures": [],
+      "turns": 8,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "medium",
+      "case": "corrupted-state-only",
+      "passed": true,
+      "failures": [],
+      "turns": 4,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "medium",
+      "case": "reachable-regression",
+      "passed": true,
+      "failures": [],
+      "turns": 4,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "high",
+      "case": "internal-choice",
+      "passed": true,
+      "failures": [],
+      "turns": 5,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "high",
+      "case": "continue-after-question",
+      "passed": true,
+      "failures": [],
+      "turns": 5,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "high",
+      "case": "handoff",
+      "passed": true,
+      "failures": [],
+      "turns": 6,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "high",
+      "case": "explicit-pause",
+      "passed": true,
+      "failures": [],
+      "turns": 3,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "high",
+      "case": "real-decision",
+      "passed": true,
+      "failures": [],
+      "turns": 7,
+      "asks": 1,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": [
+        "labels"
+      ]
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "high",
+      "case": "partial-not-approval",
+      "passed": true,
+      "failures": [],
+      "turns": 4,
+      "asks": 0,
+      "promptSha256": "66a3a7ff8ca8d759f353ddbe6665f4acd3a5fbfd20638b25984c70ce31b34e06",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "high",
+      "case": "acceptance-complete",
+      "passed": true,
+      "failures": [],
+      "turns": 4,
+      "asks": 0,
+      "promptSha256": "66a3a7ff8ca8d759f353ddbe6665f4acd3a5fbfd20638b25984c70ce31b34e06",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "high",
+      "case": "ci-scope",
+      "passed": true,
+      "failures": [],
+      "turns": 7,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "high",
+      "case": "corrupted-state-only",
+      "passed": true,
+      "failures": [],
+      "turns": 4,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-6-astra",
+      "thinking": "high",
+      "case": "reachable-regression",
+      "passed": true,
+      "failures": [],
+      "turns": 4,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "thinking": "medium",
+      "case": "internal-choice",
+      "passed": true,
+      "failures": [],
+      "turns": 4,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "thinking": "medium",
+      "case": "continue-after-question",
+      "passed": true,
+      "failures": [],
+      "turns": 4,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "thinking": "medium",
+      "case": "handoff",
+      "passed": true,
+      "failures": [],
+      "turns": 5,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "thinking": "medium",
+      "case": "explicit-pause",
+      "passed": true,
+      "failures": [],
+      "turns": 1,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "thinking": "medium",
+      "case": "real-decision",
+      "passed": true,
+      "failures": [],
+      "turns": 6,
+      "asks": 1,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": [
+        "labels"
+      ]
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "thinking": "medium",
+      "case": "partial-not-approval",
+      "passed": true,
+      "failures": [],
+      "turns": 5,
+      "asks": 0,
+      "promptSha256": "66a3a7ff8ca8d759f353ddbe6665f4acd3a5fbfd20638b25984c70ce31b34e06",
+      "unnecessaryChecks": [
+        "labels"
+      ]
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "thinking": "medium",
+      "case": "acceptance-complete",
+      "passed": true,
+      "failures": [],
+      "turns": 3,
+      "asks": 0,
+      "promptSha256": "66a3a7ff8ca8d759f353ddbe6665f4acd3a5fbfd20638b25984c70ce31b34e06",
+      "unnecessaryChecks": [
+        "labels",
+        "docs"
+      ]
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "thinking": "medium",
+      "case": "ci-scope",
+      "passed": true,
+      "failures": [],
+      "turns": 5,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": []
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "thinking": "medium",
+      "case": "corrupted-state-only",
+      "passed": true,
+      "failures": [],
+      "turns": 4,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": [
+        "labels"
+      ]
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "thinking": "medium",
+      "case": "reachable-regression",
+      "passed": true,
+      "failures": [],
+      "turns": 5,
+      "asks": 0,
+      "promptSha256": "446e3d825eda2501466d0a3753f2b9ee5c1ab357cc59e46df9bce478d270418d",
+      "unnecessaryChecks": [
+        "labels"
+      ]
+    }
+  ]
+}
