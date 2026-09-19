@@ -55,6 +55,13 @@
   Use atomic conventional commits. Before each commit inspect `git status --short` and `git diff --cached --name-status`;
   abort for unrelated/user-owned staged paths unless explicitly authorized as a separate checkpoint. Use `build` for
   build systems, dependencies, packaging, and artifact export; `chore` is maintenance outside those workflows.
+- Every commit must explain why the change is needed, not only what changed. In the body, record the motivating
+  problem or user request, the evidence/rationale for the chosen approach, and relevant validation or unverified limits.
+  Keep this self-contained enough to understand without the chat; link related issues/commits when relevant. Do not
+  invent rationale or treat a commit title, model attribution, or "cleanup/consistency" alone as justification.
+- Reverts and reapplications must identify the affected commits and explain why the previous decision is being
+  reversed, citing the new evidence or explicit user direction and any unresolved risks. Git's generated revert/reapply
+  message alone is insufficient. Missing rationale is a blocker to committing, not permission to infer authorization.
 - Never use discard-style commands on tracked files without explicit permission for those exact paths. Before amend or
   force-push, verify `HEAD` and staged paths.
 - Report exact validation evidence and residual blockers; do not claim unobserved runtime, deployment, or live success.
