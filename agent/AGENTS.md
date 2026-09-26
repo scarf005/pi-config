@@ -60,21 +60,22 @@
   blocks on existing changes, re-read the repository instructions and satisfy their checkpoint policy; do not bypass
   the hook or report the task blocked before checking that policy. Use `build` for build systems, dependencies,
   packaging, and artifact export; `chore` is maintenance outside those workflows.
-- Every commit must explain why the change is needed, not only what changed. In the body, record the motivating
-  problem or user request, the evidence/rationale for the chosen approach, and relevant validation or unverified limits.
-  Keep this self-contained enough to understand without the chat; link related issues/commits when relevant. Do not
-  invent rationale or treat a commit title, model attribution, or "cleanup/consistency" alone as justification.
-- Write a short, specific, single-line commit subject that names the actual fix; keep the required body brief and
-  factual (why, evidence, validation/limits), not a narrative or tool transcript. Do not add model attribution or
-  co-author trailers unless explicitly requested or required by the repository.
+- Make the reason for each commit clear, preferably in its short subject. If the subject already explains the problem
+  and fix, do not add a body just to repeat it. Only when essential rationale or limits cannot be conveyed in the subject,
+  add a concise factual body. Respect any explicit user-specified message format; never add redundant prose or trailers.
+- Write a short, specific, single-line commit subject that names the actual fix; when a body is used, keep it factual,
+  not a narrative or tool transcript. Do not add model attribution or co-author trailers unless explicitly requested or
+  required by the repository.
 - Reverts and reapplications must identify the affected commits and explain why the previous decision is being
   reversed, citing the new evidence or explicit user direction and any unresolved risks. Git's generated revert/reapply
   message alone is insufficient. Missing rationale is a blocker to committing, not permission to infer authorization.
 - Never use discard-style commands on tracked files without explicit permission for those exact paths. Before amend or
   force-push, verify `HEAD` and staged paths.
-- Report exact validation evidence and residual blockers; do not claim unobserved runtime, deployment, or live success.
-  Immediately before claiming a commit exists or does not exist, recheck `git log -1` and `git status --short` in the
-  named target repository; never rely on an earlier check, especially after a pause or working-directory change.
+- Report exact validation evidence and blockers that affect the requested outcome; do not claim unobserved runtime,
+  deployment, or live success. Do not append unrelated caveats, self-referential disclaimers, or commentary about
+  unrequested work. Immediately before claiming a commit exists or does not exist, recheck `git log -1` and
+  `git status --short` in the named target repository; never rely on an earlier check, especially after a pause or
+  working-directory change.
 - After completing a requested fix, lead the final response with concise `Why it happened` and `How it was fixed`
   sections before worktree, branch, commit, file, and validation details. Explain the causal chain and resulting behavior
   change rather than only listing edits.
