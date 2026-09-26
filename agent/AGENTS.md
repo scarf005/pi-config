@@ -24,8 +24,11 @@
 
 ## Implementation
 
-- Before editing, locate the target repository, read applicable `AGENTS.md`, inspect `git status --short`, and establish
-  ownership. Treat existing changes as user-owned. Use explicit paths or `cd` when tool cwd differs from the task target.
+- Before editing, locate the target repository and read every applicable `AGENTS.md` from its filesystem root through
+  the target, including repository-root instructions above the file being edited. Inspect `git status --short` and
+  establish ownership; obey any repository-specific authorization to checkpoint existing changes before staging your
+  own work. Recheck instructions if the target repository or working directory changes. Treat existing changes as
+  user-owned unless an applicable instruction explicitly authorizes their handling.
 - Inspect only instructions on the target-to-root path and task-relevant files; widen searches only for a concrete need.
 - Never discard, overwrite, stage, commit, publish, or mix user-owned changes without explicit permission. Prefer tracked
   files; create files only in the intended repository.
@@ -53,18 +56,25 @@
   forbidden, work is read-only, ownership is ambiguous, or assistant-caused validation fails.
 - Commit independently validated units as they finish rather than accumulating unrelated work until final integration.
   Use atomic conventional commits. Before each commit inspect `git status --short` and `git diff --cached --name-status`;
-  abort for unrelated/user-owned staged paths unless explicitly authorized as a separate checkpoint. Use `build` for
-  build systems, dependencies, packaging, and artifact export; `chore` is maintenance outside those workflows.
+  abort for unrelated/user-owned staged paths unless explicitly authorized as a separate checkpoint. If a commit hook
+  blocks on existing changes, re-read the repository instructions and satisfy their checkpoint policy; do not bypass
+  the hook or report the task blocked before checking that policy. Use `build` for build systems, dependencies,
+  packaging, and artifact export; `chore` is maintenance outside those workflows.
 - Every commit must explain why the change is needed, not only what changed. In the body, record the motivating
   problem or user request, the evidence/rationale for the chosen approach, and relevant validation or unverified limits.
   Keep this self-contained enough to understand without the chat; link related issues/commits when relevant. Do not
   invent rationale or treat a commit title, model attribution, or "cleanup/consistency" alone as justification.
+- Write a short, specific, single-line commit subject that names the actual fix; keep the required body brief and
+  factual (why, evidence, validation/limits), not a narrative or tool transcript. Do not add model attribution or
+  co-author trailers unless explicitly requested or required by the repository.
 - Reverts and reapplications must identify the affected commits and explain why the previous decision is being
   reversed, citing the new evidence or explicit user direction and any unresolved risks. Git's generated revert/reapply
   message alone is insufficient. Missing rationale is a blocker to committing, not permission to infer authorization.
 - Never use discard-style commands on tracked files without explicit permission for those exact paths. Before amend or
   force-push, verify `HEAD` and staged paths.
 - Report exact validation evidence and residual blockers; do not claim unobserved runtime, deployment, or live success.
+  Immediately before claiming a commit exists or does not exist, recheck `git log -1` and `git status --short` in the
+  named target repository; never rely on an earlier check, especially after a pause or working-directory change.
 - After completing a requested fix, lead the final response with concise `Why it happened` and `How it was fixed`
   sections before worktree, branch, commit, file, and validation details. Explain the causal chain and resulting behavior
   change rather than only listing edits.
