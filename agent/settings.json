@@ -30,6 +30,6 @@
     "npm:pi-goal-x"
   ],
   "defaultProjectTrust": "always",
-  "tuiMode": "regular",
+  "tuiMode": "fullscreen",
   "theme": "dark"
 }

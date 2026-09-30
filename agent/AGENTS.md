@@ -26,4 +26,3 @@
 ## Environment
 - Shell is fish: avoid bash-only syntax and heredocs in commands; use `--body-file` for multiline `gh` text.
 - Prefer `rg`, `fd`, `xh`, `gh`, `git gtr` (worktrees), `playwright-cli` (browser checks).
-- After each task run `~/.local/bin/notify --id "$PWD" "{{Korean title}}" "{{Korean summary}}"` from the task directory.
