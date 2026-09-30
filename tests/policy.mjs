@@ -45,7 +45,7 @@ const { session } = await createAgentSession({
   cwd: homedir(), agentDir, settingsManager, resourceLoader: loader,
   modelRuntime: runtime, model, sessionManager: SessionManager.inMemory(homedir()),
 });
-const currentPrompt = session.agent.state.systemPrompt;
+const currentPrompt = session.systemPrompt;
 session.dispose(); // No agent loop or tool execution in this evaluation.
 assert.ok(currentPrompt.includes(read("agent/AGENTS.md")));
 assert.ok(currentPrompt.includes("<skill>"));
