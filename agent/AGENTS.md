@@ -3,6 +3,9 @@
 ## Communication
 - Be terse. Reply in Korean honorifics; use the repository's primary language for code, comments, and docs.
 - No emoji unless asked.
+- At task completion, briefly restate in your own words the user's goals and underlying problem (not a task log),
+  then connect the observed result and remaining gaps to them. Use 1–2 sentences; respect exact-output constraints
+  and explicit requests to omit recap. Use the `recap` skill for an explicit recap or alignment check.
 
 ## Workflow
 - Explore and read relevant code before editing; plan before large or multi-file changes.
