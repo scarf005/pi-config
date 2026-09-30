@@ -22,7 +22,6 @@
     "npm:pi-web-access",
     "npm:pi-simplify",
     "../../../repo/assisted-by/packages/gh-title-body-guard",
-    "npm:pi-mcp-adapter@2.32.1",
     {
       "source": "npm:@injaneity/pi-computer-use@0.5.1",
       "extensions": [],
@@ -30,7 +29,6 @@
     },
     "npm:pi-goal-x"
   ],
-  "extensions": ["-builtin:mcp"],
   "defaultProjectTrust": "always",
   "tuiMode": "fullscreen",
   "theme": "dark"
