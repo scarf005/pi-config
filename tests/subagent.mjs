@@ -41,7 +41,9 @@ const readOnly = ["read", "grep", "find", "ls"];
 try {
   await session.bindExtensions({ mode: "print" });
   const catalog = text(await call("subagent", { action: "status" }));
-  for (const name of ["planner", "oracle", "reviewer", "worker"]) {
+  const availableTools = session.getAllTools().map((tool) => tool.name);
+  const safeReadOnly = ["read", "grep", "find", "ls", "firecrawl_scrape", "firecrawl_search", "firecrawl_map", "firecrawl_crawl", "web_search", "web_fetch"];
+  for (const name of ["planner", "investigator", "oracle", "reviewer", "worker"]) {
     assert.ok(catalog.includes(name), `Catalog advertises ${name}`);
     const { frontmatter } = parseFrontmatter(readFileSync(join(agentDir, "agents", `${name}.md`), "utf8"));
     const { details: { plan: [plan] } } = await call("subagent", { action: "plan", agent: name, task: "Validate this configuration without executing work." });
@@ -59,7 +61,12 @@ try {
       assert.ok(["bash", "edit", "write"].every((tool) => plan.tools.includes(tool)));
     } else {
       assert.equal(plan.access, "RO");
-      assert.deepEqual(plan.tools, readOnly);
+      const expectedTools = name === "investigator" ? safeReadOnly.filter((tool) => availableTools.includes(tool)) : readOnly;
+      assert.deepEqual(plan.tools, expectedTools);
+      if (name === "investigator") {
+        assert.equal(frontmatter.tools, undefined, "Investigator must inherit the safe available-tool intersection");
+        if (availableTools.includes("web_search")) assert.ok(plan.tools.includes("web_search"), "Available web_search must remain available to investigator");
+      }
     }
   }
   const { details: { plan } } = await call("subagent", {
@@ -74,7 +81,7 @@ try {
     action: "plan", tasks: [{ agent: "worker", task: "First edit." }, { agent: "worker", task: "Second edit." }],
   }), /Parallel writers share/);
   console.log("PASS: package replacement, all-extension load, model/persona resolution, read-only and parallel-write guards");
-  console.log(`SDK prompt (global + repository + active extensions): ${Buffer.byteLength(session.agent.state.systemPrompt)} UTF-8 bytes`);
+  console.log(`SDK prompt (global + repository + active extensions): ${Buffer.byteLength(session.systemPrompt)} UTF-8 bytes`);
 
   if (live) {
     const fixture = join(artifacts, "marker.txt");
@@ -82,11 +89,13 @@ try {
     writeFileSync(fixture, marker);
     const task = `Read ${fixture} with the read tool. Return only its exact contents. Do not edit files, execute commands, or delegate.`;
     const parallel = await call("subagent", {
-      tasks: ["reviewer", "planner"].map((agent) => ({ agent, task, timeout_ms: 120000 })),
+      tasks: ["reviewer", "planner", "investigator"].map((agent) => ({ agent, task, timeout_ms: 120000 })),
     });
     assert.ok(text(parallel).includes(marker), "Parallel children returned the observed fixture");
-    assert.equal(parallel.details.results.length, 2);
+    assert.equal(parallel.details.results.length, 3);
     assert.ok(parallel.details.results.every((result) => result.state === "completed" && result.finalOutput.includes(marker)));
+    const investigated = parallel.details.results.find((result) => result.label === "investigator");
+    assert.match(investigated?.transcript ?? "", /read/i, "Live investigator actually used a read-only tool");
     const background = await call("subagent", { agent: "reviewer", task, async: true, timeout_ms: 120000 });
     const id = text(background).match(/Started run ([^.\s]+)\./)?.[1];
     assert.ok(id, "Background run returned an id");

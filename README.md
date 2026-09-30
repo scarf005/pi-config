@@ -97,9 +97,9 @@ remains disabled. Reload Pi or start a new session to load the corrected tool gu
 Restart Pi or use `/reload` after changing packages; already-running sessions retain their loaded tools until then.
 
 [Agent definitions](agent/agents) preserve the configured models, thinking levels, and Terra fallback:
-`planner` uses the explore profile, `oracle` and `reviewer` use review, and `worker` uses general.
-Explore/review agents have only read/grep/find/ls. The parent supplies git diffs and runs validation commands.
-Workers retain bash/edit/write. All four personas disable further delegation and have a 30-minute timeout.
+`planner` plans only, `investigator` gathers source/artifact evidence, `oracle` checks decisions, `reviewer` reviews supplied diffs and evidence, and `worker` implements and validates.
+Explore/review agents are read-only. `investigator` omits an explicit tool list so pi-subagent intersects the safe tools actually available; web research remains conditional on those tools being present. The parent supplies readable diffs and runs validation commands.
+Workers retain bash/edit/write. All five personas disable further delegation and have a 30-minute timeout.
 
 Use `subagent { action: "status" }` for the catalog, `tasks` for parallel work, and `async: true` with
 `subagent_wait { id }` for background work. Sequential stages use separate calls, not the old `chain` parameter.
