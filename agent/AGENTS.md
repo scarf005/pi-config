@@ -15,6 +15,14 @@
 - Verify your work: run the relevant tests, type checks, and linters. Prefer running single tests over the whole suite.
   Never claim success you did not observe.
 - Use subagents for broad investigation or independent review to keep the main context clean.
+- Give subagents generous execution budgets: normally omit `timeout_ms` to retain a verified default of at least
+  30 minutes, or explicitly set at least `1800000`; allow at least `3600000` for complex investigation/implementation
+  and `7200000` for bulk translation, large builds, or similarly long work, increasing further with scope.
+  Do not impose 1–4 minute execution limits unless the user explicitly requests a short deadline; do not substitute
+  tiny turn/cost caps that prevent substantive work and a final report.
+- Resume timed-out subagents with the same or a larger execution budget, including summary-only continuations.
+  A wait-call timeout only limits the parent's wait, not the child's execution budget: leave healthy runs alive,
+  collect them later, and do not cancel/restart solely because a wait expired. Timeouts are incomplete, not clean reviews.
 - Read applicable `AGENTS.md` files from the repository root to the target before editing.
 - Treat existing uncommitted changes as the user's; never discard or mix them into your commits.
 
