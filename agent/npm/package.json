@@ -12,6 +12,6 @@
     "pi-goal-x": "^0.31.6",
     "pi-mcp-adapter": "^2.32.1",
     "pi-simplify": "^0.2.3",
-    "pi-web-access": "^0.17.1"
+    "pi-web-access": "^0.33.0"
   }
 }

@@ -30,6 +30,7 @@
     },
     "npm:pi-goal-x"
   ],
+  "extensions": ["-builtin:mcp"],
   "defaultProjectTrust": "always",
   "tuiMode": "fullscreen",
   "theme": "dark"
