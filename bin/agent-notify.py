@@ -26,7 +26,8 @@ def main():
     cwd = event.get("cwd") or os.getcwd()
     name = {"pi": "Pi", "claude": "Claude Code", "codex": "Codex"}[sys.argv[1]]
     waiting = event.get("hook_event_name") == "Notification"
-    title = f"{name}: {'입력 대기 중' if waiting else '작업 완료'}"
+    title = (f"pi@{cwd}" if sys.argv[1] == "pi" and not waiting
+             else f"{name}: {'입력 대기 중' if waiting else '작업 완료'}")
     message = event.get("message" if waiting else "last_assistant_message")
     message = message or f"{'입력 대기 중' if waiting else '작업 완료'}: {Path(cwd).name}"
     if sys.argv[1] == "claude" and waiting:
