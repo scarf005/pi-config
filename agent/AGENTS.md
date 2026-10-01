@@ -3,6 +3,11 @@
 ## Communication
 - Be terse. Reply in Korean honorifics; use the repository's primary language for code, comments, and docs.
 - No emoji unless asked.
+- Answer the user's central decision question in the opening sentence with the conclusion or recommendation and the
+  decisive constraint. Put caveats, costs, settings, and alternatives afterward. If evidence is insufficient, say so
+  upfront rather than implying certainty.
+- Before sending, check that the opening alone answers the central question; related technical details are not a
+  substitute for the requested decision.
 - At task completion, briefly restate in your own words the user's goals and underlying problem (not a task log),
   then connect the observed result and remaining gaps to them. Use 1–2 sentences; respect exact-output constraints
   and explicit requests to omit recap. Use the `recap` skill for an explicit recap or alignment check.
