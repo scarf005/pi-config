@@ -37,7 +37,7 @@ class NotifyTests(unittest.TestCase):
                 titles = {"pi": "pi@/tmp/a b", "claude": "Claude Code@/tmp/a b: 작업 완료",
                           "codex": "Codex@/tmp/a b: 작업 완료"}
                 self.assertEqual(args[-2], titles[provider])
-                self.assertEqual(args[-1], "" if provider == "claude" else "검증 완료: $(never-run)")
+                self.assertEqual(args[-1], "검증 완료: $(never-run)")
 
     def test_all_notifications_include_working_directory(self):
         for provider in ("pi", "claude", "codex"):
@@ -99,11 +99,10 @@ class NotifyTests(unittest.TestCase):
         for provider in ("pi", "claude", "codex"):
             with self.subTest(provider=provider):
                 run = self.invoke({"hook_event_name": "Stop", "cwd": "/tmp/project"}, provider)
-                self.assertEqual(run.call_args.args[0][-1],
-                                 "" if provider == "claude" else "작업 완료: project")
+                self.assertEqual(run.call_args.args[0][-1], "작업 완료: project")
                 run = self.invoke({"hook_event_name": "Stop", "last_assistant_message": "x" * 3000},
                                   provider)
-                self.assertEqual(len(run.call_args.args[0][-1]), 0 if provider == "claude" else 2000)
+                self.assertEqual(len(run.call_args.args[0][-1]), 2000)
 
     def test_delivery_failure_is_nonblocking(self):
         with patch.object(notify.subprocess, "run", side_effect=OSError):
