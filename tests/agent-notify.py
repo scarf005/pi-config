@@ -53,7 +53,37 @@ class NotifyTests(unittest.TestCase):
     def test_named_root_and_waiting_notification(self):
         run = self.invoke({"hook_event_name": "Notification", "agent_type": "reviewer",
                            "message": "권한 확인 필요"}, depth="0")
-        self.assertEqual(run.call_args.args[0][-2:], ["Claude Code: 입력 대기 중", "권한 확인 필요"])
+        self.assertEqual(run.call_args.args[0][-2:], [
+            "Claude Code: 입력 대기 중",
+            f"Working directory: {os.getcwd()}\nSession: unknown\nNotification: unknown\n권한 확인 필요",
+        ])
+
+    def test_claude_waiting_context(self):
+        for reason in ("idle_prompt", "permission_prompt"):
+            with self.subTest(reason=reason):
+                run = self.invoke({"hook_event_name": "Notification", "cwd": "/tmp/a b",
+                                   "session_id": "session-123", "notification_type": reason,
+                                   "message": "Claude is waiting for your input"})
+                self.assertEqual(run.call_args.args[0][-1],
+                                 "Working directory: /tmp/a b\nSession: session-123\n"
+                                 f"Notification: {reason}\nClaude is waiting for your input")
+
+    def test_other_providers_waiting_message_unchanged(self):
+        for provider in ("pi", "codex"):
+            with self.subTest(provider=provider):
+                run = self.invoke({"hook_event_name": "Notification", "cwd": "/tmp/project",
+                                   "session_id": "session-123", "message": "Input needed"}, provider)
+                self.assertEqual(run.call_args.args[0][-1], "Input needed")
+
+    def test_claude_waiting_missing_and_long_message(self):
+        event = {"hook_event_name": "Notification", "cwd": "/tmp/project",
+                 "session_id": "session-123", "notification_type": "idle_prompt"}
+        run = self.invoke(event)
+        self.assertTrue(run.call_args.args[0][-1].endswith("입력 대기 중: project"))
+        run = self.invoke({**event, "message": "x" * 3000})
+        message = run.call_args.args[0][-1]
+        self.assertEqual(len(message), 2000)
+        self.assertTrue(message.startswith("Working directory: /tmp/project\nSession: session-123\n"))
 
     def test_missing_message_and_bounded_message(self):
         run = self.invoke({"hook_event_name": "Stop", "cwd": "/tmp/project"})
