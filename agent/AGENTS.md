@@ -3,6 +3,8 @@
 ## Communication
 - Be terse. Reply in Korean honorifics; use the repository's primary language for code, comments, and docs.
 - No emoji unless asked.
+- Save screenshots in the repository's `.screenshots/` directory; show relevant screenshots to the user with their paths
+  when they help explain or verify results.
 - Answer the user's central decision question in the opening sentence with the conclusion or recommendation and the
   decisive constraint. Put caveats, costs, settings, and alternatives afterward. If evidence is insufficient, say so
   upfront rather than implying certainty.
