@@ -37,7 +37,7 @@ class NotifyTests(unittest.TestCase):
                 titles = {"pi": "pi@/tmp/a b", "claude": "Claude Code@/tmp/a b: 작업 완료",
                           "codex": "Codex@/tmp/a b: 작업 완료"}
                 self.assertEqual(args[-2], titles[provider])
-                self.assertEqual(args[-1], "검증 완료: $(never-run)")
+                self.assertEqual(args[-1], "" if provider == "claude" else "검증 완료: $(never-run)")
 
     def test_all_notifications_include_working_directory(self):
         for provider in ("pi", "claude", "codex"):
@@ -67,18 +67,16 @@ class NotifyTests(unittest.TestCase):
                            "message": "권한 확인 필요"}, depth="0")
         self.assertEqual(run.call_args.args[0][-2:], [
             f"Claude Code@{os.getcwd()}: 입력 대기 중",
-            f"Working directory: {os.getcwd()}\nSession: unknown\nNotification: unknown\n권한 확인 필요",
+            "",
         ])
 
-    def test_claude_waiting_context(self):
+    def test_claude_waiting_body_is_empty(self):
         for reason in ("idle_prompt", "permission_prompt"):
             with self.subTest(reason=reason):
                 run = self.invoke({"hook_event_name": "Notification", "cwd": "/tmp/a b",
                                    "session_id": "session-123", "notification_type": reason,
                                    "message": "Claude is waiting for your input"})
-                self.assertEqual(run.call_args.args[0][-1],
-                                 "Working directory: /tmp/a b\nSession: session-123\n"
-                                 f"Notification: {reason}\nClaude is waiting for your input")
+                self.assertEqual(run.call_args.args[0][-1], "")
 
     def test_other_providers_waiting_message_unchanged(self):
         for provider in ("pi", "codex"):
@@ -93,17 +91,19 @@ class NotifyTests(unittest.TestCase):
         event = {"hook_event_name": "Notification", "cwd": "/tmp/project",
                  "session_id": "session-123", "notification_type": "idle_prompt"}
         run = self.invoke(event)
-        self.assertTrue(run.call_args.args[0][-1].endswith("입력 대기 중: project"))
+        self.assertEqual(run.call_args.args[0][-1], "")
         run = self.invoke({**event, "message": "x" * 3000})
-        message = run.call_args.args[0][-1]
-        self.assertEqual(len(message), 2000)
-        self.assertTrue(message.startswith("Working directory: /tmp/project\nSession: session-123\n"))
+        self.assertEqual(run.call_args.args[0][-1], "")
 
     def test_missing_message_and_bounded_message(self):
-        run = self.invoke({"hook_event_name": "Stop", "cwd": "/tmp/project"})
-        self.assertEqual(run.call_args.args[0][-1], "작업 완료: project")
-        run = self.invoke({"hook_event_name": "Stop", "last_assistant_message": "x" * 3000})
-        self.assertEqual(len(run.call_args.args[0][-1]), 2000)
+        for provider in ("pi", "claude", "codex"):
+            with self.subTest(provider=provider):
+                run = self.invoke({"hook_event_name": "Stop", "cwd": "/tmp/project"}, provider)
+                self.assertEqual(run.call_args.args[0][-1],
+                                 "" if provider == "claude" else "작업 완료: project")
+                run = self.invoke({"hook_event_name": "Stop", "last_assistant_message": "x" * 3000},
+                                  provider)
+                self.assertEqual(len(run.call_args.args[0][-1]), 0 if provider == "claude" else 2000)
 
     def test_delivery_failure_is_nonblocking(self):
         with patch.object(notify.subprocess, "run", side_effect=OSError):

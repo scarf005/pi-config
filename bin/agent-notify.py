@@ -30,10 +30,8 @@ def main():
              else f"{name}@{cwd}: {'입력 대기 중' if waiting else '작업 완료'}")
     message = event.get("message" if waiting else "last_assistant_message")
     message = message or f"{'입력 대기 중' if waiting else '작업 완료'}: {Path(cwd).name}"
-    if sys.argv[1] == "claude" and waiting:
-        session = event.get("session_id") or "unknown"
-        reason = event.get("notification_type") or "unknown"
-        message = f"Working directory: {cwd}\nSession: {session}\nNotification: {reason}\n{message}"
+    if sys.argv[1] == "claude":
+        message = ""
     try:
         subprocess.run(
             [str(Path.home() / ".local/bin/notify"), "--id", cwd, title, message[:2000]],
