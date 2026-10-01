@@ -2,6 +2,7 @@
 agent/auth.json
 agent/run-history.jsonl
 agent/sessions/
+agent/pi-subagents/
 
 # Downloaded/generated dependencies and caches
 agent/bin/

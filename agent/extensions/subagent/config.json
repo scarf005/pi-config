@@ -1,0 +1,11 @@
+{
+  "asyncByDefault": false,
+  "disabledFeatures": ["workflow-scripts"],
+  "timeoutMs": 1800000,
+  "globalConcurrencyLimit": 4,
+  "maxActiveAsyncRunsPerSession": 4,
+  "maxSubagentDepth": 1,
+  "intercomBridge": { "mode": "off" },
+  "missions": { "enabled": false },
+  "scheduledRuns": { "enabled": false }
+}

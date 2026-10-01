@@ -25,13 +25,15 @@
 
 ## Subagent delegation
 - Route work by role: `planner` produces plans only; `investigator` gathers source/artifact evidence; `reviewer` reviews an actual supplied diff and evidence; `worker` implements and validates changes.
-- Before delegating, preflight the effective tools with `action: "plan"`. Treat the result as authoritative for profile, tools, access, model, budgets, and isolation. Do not assume a read-only child can browse the web or run shell commands.
-- Use `investigator` for source and artifact analysis without an explicit `tools` list, so the package computes the safe available-tool intersection. It may use `web_search`, `web_fetch`, or other safe web tools only when the preflight and child actually provide them; otherwise external acquisition stays with the parent, which must supply a readable snapshot or report the blocker.
+- Before delegating, inspect `subagent { action: "list", capabilities: true }` and, when needed, `action: "get", agent: "<name>"`. Confirm the selected role's tools, model, timeout and extensions; these declarations do not prove successful execution. Do not use the removed package's `action: "plan"` API.
+- `investigator` has an explicit read/web tool allowlist and loads pi-web-access inside its child. Other read-only roles have only read/grep/find/ls; workers retain bash/edit/write. Missing requested tools must fail or be reported, never be treated as inspected sources.
+- Use foreground delegation by default so results return directly: `subagent { agent, task, async: false }`; use `tasks: [{ agent, task }, ...]` for independent parallel work. Use explicit `async: true` only when the parent has different work to do, then collect the result with `bg_wait { id, timeoutMs }`. Do not use the removed `subagent_wait`, `resume` parameter, or snake_case budget fields.
+- Completion notifications are bookkeeping, not new findings. Do not send a separate "already reflected" response for a consumed result. A follow-up child response must consolidate its substantive findings rather than replace them with an acknowledgment.
 - Restricted children receive the original request and actual readable diffs, source snapshots, logs, or artifacts; a commit ID or instruction to run `git diff` is not inspectable evidence. A reviewer with no runtime tools reviews source and supplied evidence only.
 - A process completion state is not task acceptance. A plan-only result, missing required evidence, partial/timeout result, or no-findings claim without the requested inspection is incomplete: resume the child with the missing material, obtain the required check, or report a concrete blocker. Do not silently convert incomplete work into approval.
 - Do not duplicate the exact delegated task in parallel in the parent. If a child is incomplete, resume it or provide the missing packet; use a separate fallback only when explicitly justified and report that fallback.
 
-- Give subagents generous execution budgets: normally omit `timeout_ms` to retain a verified default of at least
+- Give subagents generous execution budgets: normally omit `timeoutMs` to retain the configured default of at least
   30 minutes, or explicitly set at least `1800000`; allow at least `3600000` for complex investigation/implementation
   and `7200000` for bulk translation, large builds, or similarly long work, increasing further with scope.
   Do not impose 1–4 minute execution limits unless the user explicitly requests a short deadline; do not substitute

@@ -3,11 +3,14 @@ name: planner
 description: Creates implementation plans from requirements and code context
 model: openai-codex/gpt-5.6-sol
 thinking: high
-fallback_models: [openai-codex/gpt-5.6-terra]
-profile: explore
+advertise: true
 tools: read, grep, find, ls
-spawns: false
-timeout_ms: 1800000
+extensions:
+allowedAgents:
+acceptanceRole: read-only
+inheritProjectContext: true
+async: false
+timeoutMs: 1800000
 ---
 
 You are a planning subagent. Read the supplied requirements and relevant code, then return an implementation plan.

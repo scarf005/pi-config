@@ -93,27 +93,30 @@ remains disabled. Reload Pi or start a new session to load the corrected tool gu
 
 ## Subagents
 
-[Settings](agent/settings.json) load `@parke.dev/pi-subagent@0.8.0` instead of `pi-subagents`.
-Restart Pi or use `/reload` after changing packages; already-running sessions retain their loaded tools until then.
+[Settings](agent/settings.json) pin [pi-subagents](https://github.com/nicobailon/pi-subagents) 0.74.0.
+The previous `@parke.dev/pi-subagent` package is removed. Restart Pi or use `/reload`; existing sessions keep their old loaded tools until then.
 
-[Agent definitions](agent/agents) preserve the configured models, thinking levels, and Terra fallback:
-`planner` plans only, `investigator` gathers source/artifact evidence, `oracle` checks decisions, `reviewer` reviews supplied diffs and evidence, and `worker` implements and validates.
-Explore/review agents are read-only. `investigator` omits an explicit tool list so pi-subagent intersects the safe tools actually available; web research remains conditional on those tools being present. The parent supplies readable diffs and runs validation commands.
-Workers retain bash/edit/write. All five personas disable further delegation and have a 30-minute timeout.
+[Agent definitions](agent/agents) preserve the five roles and their model/thinking selections:
+`planner` plans, `investigator` gathers evidence, `oracle` checks decisions, `reviewer` reviews supplied diffs, and `worker` implements and validates.
+Read-only roles use explicit read/grep/find/ls allowlists. `investigator` additionally loads pi-web-access and its four web tools inside the child, including foreground runs. Workers retain bash/edit/write and repository skill discovery.
+Every role forbids descendant launches and defaults to a 30-minute timeout. Unsupported automatic model fallbacks are removed; failed launches must be handled explicitly, not silently switched to another model.
 
-Use `subagent { action: "status" }` for the catalog, `tasks` for parallel work, and `async: true` with
-`subagent_wait { id }` for background work. Sequential stages use separate calls, not the old `chain` parameter.
-Pass `context: "fork"` explicitly when a single child needs the parent conversation; use `resume` for a child session.
-The old supervisor/intercom bridge is not carried over: children return blockers, and the parent can resume them.
-Existing Nico transcripts remain on disk; its run IDs are not migrated to the new inspector.
+[Runtime config](agent/extensions/subagent/config.json) defaults to foreground result delivery and enables simple `tasks`/`chain` inputs instead of workflow scripts. Automatic missions, schedules, and the supervisor bridge are off; bundled agents are disabled so the existing role boundaries remain authoritative.
+
+- Inspect roles with `subagent { action: "list", capabilities: true }` and `action: "get", agent: "reviewer"`.
+- Delegate with `subagent { agent: "reviewer", task: "..." }`; the actual result returns inline by default.
+- Parallel work uses `tasks: [{ agent, task }, ...], async: false`.
+- For explicit background work, use `async: true`; `bg_wait { id, timeoutMs }` returns completion metadata and readable output-archive references. Read those references rather than treating the completion preview as the report.
+- Use `context: "fork"` only when inherited conversation is needed. Resume with `action: "resume", id, message`, not the previous package's `resume` field.
+
+Old transcripts and runtime directories are preserved; old package run IDs are not migrated. Foreground delivery avoids delayed completion turns, but no package guarantees that a model will produce a useful report. After steering, request a consolidated report, not an acknowledgment.
 
 ```sh
-PI_OFFLINE=1 node tests/subagent.mjs        # SDK loading, personas, and permission guards; no model calls
-PI_OFFLINE=1 node tests/subagent.mjs --live # Real parallel children, background wait, and session resume
+PI_OFFLINE=1 node tests/subagent.mjs        # Extension loading and resolved role/tool contracts; no model calls
+PI_OFFLINE=1 node tests/subagent.mjs --live # Real foreground/parallel reads and background archive replay
 ```
 
-The live smoke test uses disposable data and existing model authentication. It does not exercise worktree
-apply/discard, interactive rendering, or provider-failure retries.
+The live smoke test uses disposable data and existing child-model authentication. Completion-triggered parent replies are stubbed to count wakes without spending parent-model tokens; children run real models. It checks actual read calls, separate parallel results, readable background output, replay, and no duplicate completion wake. Worktree operations, interactive rendering, resume, and provider-failure recovery are not covered.
 
 ## Godot MCP + isolated computer-use (game desktop)
 

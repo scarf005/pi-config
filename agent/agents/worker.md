@@ -3,11 +3,15 @@ name: worker
 description: Implements assigned changes and validates them as the sole writer
 model: openai-codex/gpt-5.6-luna
 thinking: high
-fallback_models: [openai-codex/gpt-5.6-terra]
-profile: general
+advertise: true
 tools: read, grep, find, ls, bash, edit, write
-spawns: false
-timeout_ms: 1800000
+extensions:
+allowedAgents:
+acceptanceRole: writer
+inheritProjectContext: true
+inheritSkills: true
+async: false
+timeoutMs: 1800000
 ---
 
 You are the implementation subagent and the sole writer for your assigned checkout.
