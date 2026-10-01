@@ -34,14 +34,19 @@ class NotifyTests(unittest.TestCase):
                 self.assertEqual(run.call_count, 1)
                 args = run.call_args.args[0]
                 self.assertEqual(args[1:3], ["--id", "/tmp/a b"])
-                titles = {"pi": "pi@/tmp/a b", "claude": "Claude Code: 작업 완료",
-                          "codex": "Codex: 작업 완료"}
+                titles = {"pi": "pi@/tmp/a b", "claude": "Claude Code@/tmp/a b: 작업 완료",
+                          "codex": "Codex@/tmp/a b: 작업 완료"}
                 self.assertEqual(args[-2], titles[provider])
                 self.assertEqual(args[-1], "검증 완료: $(never-run)")
 
-    def test_pi_stop_title_without_cwd(self):
-        run = self.invoke({"hook_event_name": "Stop"}, "pi", argv_payload=True)
-        self.assertEqual(run.call_args.args[0][-2], f"pi@{os.getcwd()}")
+    def test_all_notifications_include_working_directory(self):
+        for provider in ("pi", "claude", "codex"):
+            for hook in ("Stop", "Notification"):
+                for cwd in (None, "/tmp/a b", "/"):
+                    with self.subTest(provider=provider, hook=hook, cwd=cwd):
+                        run = self.invoke({"hook_event_name": hook, "cwd": cwd}, provider,
+                                          argv_payload=provider == "pi")
+                        self.assertIn(f"@{cwd or os.getcwd()}", run.call_args.args[0][-2])
 
     def test_subagents_and_unrelated_events_never_notify(self):
         for event, depth in (
@@ -61,7 +66,7 @@ class NotifyTests(unittest.TestCase):
         run = self.invoke({"hook_event_name": "Notification", "agent_type": "reviewer",
                            "message": "권한 확인 필요"}, depth="0")
         self.assertEqual(run.call_args.args[0][-2:], [
-            "Claude Code: 입력 대기 중",
+            f"Claude Code@{os.getcwd()}: 입력 대기 중",
             f"Working directory: {os.getcwd()}\nSession: unknown\nNotification: unknown\n권한 확인 필요",
         ])
 
@@ -80,7 +85,8 @@ class NotifyTests(unittest.TestCase):
             with self.subTest(provider=provider):
                 run = self.invoke({"hook_event_name": "Notification", "cwd": "/tmp/project",
                                    "session_id": "session-123", "message": "Input needed"}, provider)
-                title = {"pi": "Pi: 입력 대기 중", "codex": "Codex: 입력 대기 중"}[provider]
+                title = {"pi": "pi@/tmp/project: 입력 대기 중",
+                         "codex": "Codex@/tmp/project: 입력 대기 중"}[provider]
                 self.assertEqual(run.call_args.args[0][-2:], [title, "Input needed"])
 
     def test_claude_waiting_missing_and_long_message(self):
