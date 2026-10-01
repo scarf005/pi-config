@@ -1,0 +1,16 @@
+{
+  "name": "pi-ci-watch-local",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test core.test.ts",
+    "check": "tsc --noEmit",
+    "format": "deno fmt index.ts core.ts core.test.ts README.md package.json tsconfig.json"
+  },
+  "dependencies": { "smee-client": "5.0.0" },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  },
+  "devDependencies": { "@types/node": "^25.0.0", "typescript": "^5.9.0" }
+}
