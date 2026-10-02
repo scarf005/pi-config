@@ -1,4 +1,6 @@
 const root = "/home/scarf/repo/cata/Cataclysm-BN-worktrees/refactor-engine-client";
+const todayRoot = "/home/scarf/repo/cata/Cataclysm-BN-worktrees/refactor-engine-client-today";
+const goalFile = "/home/scarf/repo/cata/Cataclysm-BN-worktrees/fix-engine-client-iteminfo-purity/.pi/goals/active_goal_2026100209154898_muq7piwt-yqeqm2.md";
 const observedAt = new Date().toISOString();
 return runs.run("hourly-progress", {
   label: "Summarize BN implementation progress",
@@ -6,9 +8,13 @@ return runs.run("hourly-progress", {
   cwd: root,
   context: "fresh",
   output: `${root}/out/hourly-progress/${observedAt}.md`,
-  task: `Report progress of the user's confirmed GOAL.md implementation at ${observedAt}.
+  task: `Report progress of today's confirmed goal muq7piwt-yqeqm2 at ${observedAt}.
 Read-only reporting, not implementation, a new goal, review, or permission to start workers.
-Read ${root}/GOAL.md and the current board at the start of ${root}/progress.md.
+Read ${goalFile} and ${todayRoot}/progress.md for today's priorities: language-neutral
+interface; native tutorial replay and measured bottlenecks; a Rust game client with actual
+screen-reader accessibility, full mouse support and excellent Zomboid-informed UI/UX.
+Read ${root}/GOAL.md and the current board at the start of ${root}/progress.md as the
+broader existing engine work. Do not substitute that older goal for today's requirements.
 Read the latest previous report under ${root}/out/hourly-progress/ if present.
 Inspect current lane progress/handoff artifacts and exact run status.json files under
 /tmp/pi-subagents-uid-1000/async-subagent-runs/. Use the run IDs in the lane ledgers;
@@ -33,6 +39,8 @@ acceptance rather than reducing the GOAL to the active UI slices.
 
 No source/config/progress edits, commands, builds, Git operations, installs, delegation,
 external research, or sensitive payloads. Return only the report; runtime persists output.
-If the canonical goal is complete or cancelled, report that with evidence and explicitly
-request the parent stop schedule bn-goal-hourly-progress; do not reopen the goal.`,
+If today's goal muq7piwt-yqeqm2 is complete or cancelled, report that with evidence and
+explicitly request the parent stop schedule bn-goal-hourly-progress; do not reopen it.
+If its record is missing, locate its archived record or report status unverified; completion
+of the older canonical goal alone does not end today's report.`,
 });
