@@ -41,12 +41,11 @@ class NotifyTests(unittest.TestCase):
 
     def test_all_notifications_include_working_directory(self):
         for provider in ("pi", "claude", "codex"):
-            for hook in ("Stop", "Notification"):
-                for cwd in (None, "/tmp/a b", "/"):
-                    with self.subTest(provider=provider, hook=hook, cwd=cwd):
-                        run = self.invoke({"hook_event_name": hook, "cwd": cwd}, provider,
-                                          argv_payload=provider == "pi")
-                        self.assertIn(f"@{cwd or os.getcwd()}", run.call_args.args[0][-2])
+            for cwd in (None, "/tmp/a b", "/"):
+                with self.subTest(provider=provider, cwd=cwd):
+                    run = self.invoke({"hook_event_name": "Stop", "cwd": cwd}, provider,
+                                      argv_payload=provider == "pi")
+                    self.assertIn(f"@{cwd or os.getcwd()}", run.call_args.args[0][-2])
 
     def test_subagents_and_unrelated_events_never_notify(self):
         for event, depth in (
@@ -62,38 +61,16 @@ class NotifyTests(unittest.TestCase):
             with self.subTest(event=event, depth=depth):
                 self.assertEqual(self.invoke(event, depth=depth).call_count, 0)
 
-    def test_named_root_and_waiting_notification(self):
-        run = self.invoke({"hook_event_name": "Notification", "agent_type": "reviewer",
-                           "message": "권한 확인 필요"}, depth="0")
-        self.assertEqual(run.call_args.args[0][-2:], [
-            f"Claude Code@{os.getcwd()}: 입력 대기 중",
-            "",
-        ])
-
-    def test_claude_waiting_body_is_empty(self):
-        for reason in ("idle_prompt", "permission_prompt"):
-            with self.subTest(reason=reason):
-                run = self.invoke({"hook_event_name": "Notification", "cwd": "/tmp/a b",
-                                   "session_id": "session-123", "notification_type": reason,
-                                   "message": "Claude is waiting for your input"})
-                self.assertEqual(run.call_args.args[0][-1], "")
-
-    def test_other_providers_waiting_message_unchanged(self):
-        for provider in ("pi", "codex"):
-            with self.subTest(provider=provider):
-                run = self.invoke({"hook_event_name": "Notification", "cwd": "/tmp/project",
-                                   "session_id": "session-123", "message": "Input needed"}, provider)
-                title = {"pi": "pi@/tmp/project: 입력 대기 중",
-                         "codex": "Codex@/tmp/project: 입력 대기 중"}[provider]
-                self.assertEqual(run.call_args.args[0][-2:], [title, "Input needed"])
-
-    def test_claude_waiting_missing_and_long_message(self):
-        event = {"hook_event_name": "Notification", "cwd": "/tmp/project",
-                 "session_id": "session-123", "notification_type": "idle_prompt"}
-        run = self.invoke(event)
-        self.assertEqual(run.call_args.args[0][-1], "")
-        run = self.invoke({**event, "message": "x" * 3000})
-        self.assertEqual(run.call_args.args[0][-1], "")
+    def test_notifications_never_deliver(self):
+        for provider in ("pi", "claude", "codex"):
+            for reason in (None, "idle_prompt", "permission_prompt", "agent_completed"):
+                for message in (None, "Input needed", "x" * 3000):
+                    with self.subTest(provider=provider, reason=reason, message_length=len(message or "")):
+                        run = self.invoke({"hook_event_name": "Notification", "cwd": "/tmp/a b",
+                                           "agent_type": "reviewer", "notification_type": reason,
+                                           "message": message}, provider, depth="0",
+                                          argv_payload=provider == "pi")
+                        self.assertEqual(run.call_count, 0)
 
     def test_missing_message_and_bounded_message(self):
         for provider in ("pi", "claude", "codex"):

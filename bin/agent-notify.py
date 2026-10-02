@@ -18,20 +18,12 @@ def main():
         return
     if not isinstance(event, dict) or event.get("agent_id"):
         return
-    if event.get("hook_event_name") not in ("Stop", "Notification"):
-        return
-    # Claude can notify the parent that a background agent finished.
-    if event.get("notification_type") == "agent_completed":
+    if event.get("hook_event_name") != "Stop":
         return
     cwd = event.get("cwd") or os.getcwd()
     name = {"pi": "pi", "claude": "Claude Code", "codex": "Codex"}[sys.argv[1]]
-    waiting = event.get("hook_event_name") == "Notification"
-    title = (f"pi@{cwd}" if sys.argv[1] == "pi" and not waiting
-             else f"{name}@{cwd}: {'입력 대기 중' if waiting else '작업 완료'}")
-    message = event.get("message" if waiting else "last_assistant_message")
-    message = message or f"{'입력 대기 중' if waiting else '작업 완료'}: {Path(cwd).name}"
-    if sys.argv[1] == "claude" and waiting:
-        message = ""
+    title = f"pi@{cwd}" if sys.argv[1] == "pi" else f"{name}@{cwd}: 작업 완료"
+    message = event.get("last_assistant_message") or f"작업 완료: {Path(cwd).name}"
     try:
         subprocess.run(
             [str(Path.home() / ".local/bin/notify"), "--id", cwd, title, message[:2000]],
