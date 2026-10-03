@@ -11,6 +11,12 @@ description: GitHub issue, pull request, branch, worktree, commit metadata, chec
 - Branch from `upstream/main` when available, otherwise `origin/main`; name branches
   `{type}/{issue-number}/{issue-slug}` or `{type}/{slug}`
 - For requested new worktrees, use `https://github.com/coderabbitai/git-worktree-runner`
+- Before retiring a worktree, recheck ownership, HEAD, index and local changes at the mutation boundary. Verify the
+  actual tracked payload's content/modes against retained Git objects; earlier clean status or filesystem stats alone
+  cannot prove preservation. Preserve unexpected local changes outside disposable storage before proceeding, unless
+  their discard was explicitly authorized. Keep the requested Trash/permanent-deletion boundary.
+- Dependency clearance must record inspected scope, limits and read failures. Only explicitly optional missing paths
+  count as absent; permission/I/O failures and uninspected required scope block an absence claim.
 - Inspect the specific PR/commit file list and diff before claiming whether it changed a file
 - Read repository PR templates, title/changelog guidelines, and existing comparable PRs before drafting
 - Before editing an existing issue or PR, fetch its current title and body with `gh`; patch a saved copy minimally and
