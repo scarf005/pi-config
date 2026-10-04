@@ -13,6 +13,9 @@ description: CI/CD workflow rules. Use when creating or modifying GitHub Actions
 - When CI fails after an intentional behavior change, verify whether expectations or fixtures are stale before changing
   intended implementation behavior
 - Run the matching local workflow when feasible and state exact unverified event/platform/release paths
+- Before adding runtime permissions, enumerate required paths, executables, and environment variables; scope grants and
+  verify an out-of-scope operation is denied. Do not describe unrestricted grants as minimal. Subprocess permissions
+  bypass the runtime sandbox; report that boundary explicitly.
 - When using `denoland/setup-deno@v2`, use `with: { cache: true }`.
 - If a project needs a scheduled GitHub Actions cron job, add `gautamkrishnar/keepalive-workflow@v2` so inactive
   repositories keep scheduled workflows enabled; `scarf005/sangiyo` is an example case.
