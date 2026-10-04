@@ -17,6 +17,10 @@ description: GitHub issue, pull request, branch, worktree, commit metadata, chec
   their discard was explicitly authorized. Keep the requested Trash/permanent-deletion boundary.
 - Dependency clearance must record inspected scope, limits and read failures. Only explicitly optional missing paths
   count as absent; permission/I/O failures and uninspected required scope block an absence claim.
+- Worktree ownership checks use scoped process identities, cwd and open/mapped file paths. Do not sweep process
+  environments or retain complete command lines; inspect individual launch paths only when needed. Never replace a
+  denied scoped probe with `--allow-all`/`-A` or a general-interpreter bypass. Use fixed native metadata commands for
+  the same permitted fields, or report the inspection gap.
 - Inspect the specific PR/commit file list and diff before claiming whether it changed a file
 - Read repository PR templates, title/changelog guidelines, and existing comparable PRs before drafting
 - Before editing an existing issue or PR, fetch its current title and body with `gh`; patch a saved copy minimally and
