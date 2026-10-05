@@ -245,6 +245,42 @@ Deno.test("workflow dryRun forwards only validated booleans and retains the work
     strictEqual(launches, 0)
   }
 })
+Deno.test("undated blocking evidence retains its citation and hash without invented timing or progress", () => {
+  const { snapshot } = fixture()
+  const current = structuredClone(snapshot)
+  const evidence = {
+    area: "P2",
+    kind: "blocker" as const,
+    text: "raw DB handle 수명 문제로 history 승인은 BLOCKED입니다.",
+    evidence: "/named/blocking-review.md",
+    evidenceAt: null,
+    hash: "recorded-review-hash",
+  }
+  current.evidence.push(evidence)
+  const report = render(current, snapshot, "/report.md")
+  for (const text of [report.markdown, report.body]) {
+    strictEqual(text.includes(evidence.text), true)
+    strictEqual(text.includes("근거 시각 미확인; 신규 여부 확인 불가"), true)
+    strictEqual(text.includes("근거 3시간 이내"), false)
+    strictEqual(text.includes("새 근거"), false)
+    strictEqual(text.includes("32% → 32% (16/50)"), true)
+  }
+  strictEqual(
+    report.markdown.includes(
+      "/named/blocking-review.md (근거 시각 미확인; SHA-256 recorded-review-hash)",
+    ),
+    true,
+  )
+  strictEqual(
+    report.markdown.includes("최종 전달 게이트(별도): 0/8 → 0/8"),
+    true,
+  )
+  strictEqual(current.evidence[0].evidenceAt, null)
+  strictEqual(
+    noteStatus(evidence, null, current.reportedAt),
+    "근거 시각 미확인; 신규 여부 확인 불가",
+  )
+})
 Deno.test("bounded Unicode body preserves every area and report path", () => {
   const { snapshot } = fixture()
   snapshot.evidence.push({

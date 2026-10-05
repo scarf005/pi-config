@@ -42,7 +42,7 @@ const noteSchema = v.object({
   kind: v.picklist(["verified", "partial", "blocker"]),
   text: v.pipe(v.string(), v.minLength(1), v.maxLength(2000)),
   evidence: v.string(),
-  evidenceAt: timestamp,
+  evidenceAt: v.nullable(timestamp),
 })
 export type Note = v.InferOutput<typeof noteSchema>
 type Evidence = Note & { hash: string | null }
@@ -88,7 +88,8 @@ export function validateCard(raw: unknown, goalText: string): Card {
 }
 export const percent = (n: number, total: number) =>
   `${Math.round(n / total * 1000) / 10}%`
-const fresh = (at: string, now: string) => {
+const fresh = (at: string | null, now: string) => {
+  if (at === null) return false
   const age = Date.parse(now) - Date.parse(at)
   return age >= 0 && age <= 3 * 60 * 60 * 1000
 }
@@ -97,6 +98,7 @@ export function noteStatus(
   previous: Snapshot | null,
   now: string,
 ) {
+  if (e.evidenceAt === null) return "근거 시각 미확인; 신규 여부 확인 불가"
   const evidenceTime = Date.parse(e.evidenceAt)
   if (
     !e.hash || !Number.isFinite(evidenceTime) || evidenceTime > Date.parse(now)
@@ -172,7 +174,7 @@ export function render(
     "",
     "## 근거",
     ...current.evidence.map((e) =>
-      `- ${e.evidence} (근거 시각 ${e.evidenceAt}; SHA-256 ${
+      `- ${e.evidence} (근거 시각 ${e.evidenceAt ?? "미확인"}; SHA-256 ${
         e.hash ?? "확인 불가"
       })`
     ),
@@ -351,7 +353,10 @@ async function main() {
           "/home/scarf/repo/cata/Cataclysm-BN-worktrees/",
         ) && !note.evidence.includes("/../"),
       )
-      require(Date.parse(note.evidenceAt) <= Date.parse(reportedAt))
+      require(
+        note.evidenceAt === null ||
+          Date.parse(note.evidenceAt) <= Date.parse(reportedAt),
+      )
       let hash: string | null = null
       try {
         hash = await sha(await Deno.readTextFile(note.evidence))
