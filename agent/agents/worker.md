@@ -1,7 +1,7 @@
 ---
 name: worker
 description: Implements assigned changes and validates them as the sole writer
-model: openai-codex/gpt-5.6-luna
+model: openai-codex/gpt-6-astra
 thinking: high
 advertise: true
 tools: read, grep, find, ls, bash, edit, write
