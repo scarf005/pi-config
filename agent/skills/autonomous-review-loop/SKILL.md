@@ -40,9 +40,18 @@ coordination. The goal is the requested result, not a clean review queue.
 ## Bound the work and gather evidence
 
 - Split implementation into small, independently verifiable tasks, but keep
-  their relationship to the full acceptance ledger explicit. Order dependent
-  work; continue independent authorized work while another task is pending.
-  Bug fixes need a concrete reproducer of the reported behavior.
+  their relationship to the full acceptance ledger explicit. Prioritize the
+  user's acceptance outcomes; tie housekeeping, recovery and helper work to a
+  named blocker, and resume core work when that blocker closes. Respect explicit
+  user ordering; otherwise continue independent authorized work while a lane is
+  pending. Bug fixes need a concrete reproducer of the reported behavior.
+- Missing reproducible build/cache output calls for regeneration and fresh
+  validation, not indefinite recovery or a halt to unrelated work. Preserve
+  irreplaceable inputs and never label a new run as the lost original evidence.
+- For new or materially changed validation runners, use the prescribed project
+  stack and presets. Prove the affected launch, output capture, permission,
+  deadline and owned stop/join paths with a tiny owned fixture before a costly
+  run. Include these constraints explicitly in delegated assignments.
 - Run the requested user path on the target revision. Visual and behavioral
   acceptance requires inspecting the actual output and interactions, not just
   builds, internal state, object counts or tests of a directly called helper.
@@ -82,9 +91,14 @@ coordination. The goal is the requested result, not a clean review queue.
 
 ## Fix, verify and stop for the right reason
 
-1. Implement a bounded change and run the relevant repository checks. Test
-   observable behavior, including boundaries, failure paths and interactions;
-   do not encode incidental implementation details merely to obtain green tests.
+1. Before expensive validation of stateful or cross-cutting changes, check
+   ownership, identity/lifetime, invalidation, and failure-versus-absence paths.
+   Consider shared-header rebuild impact. Start with the smallest required
+   game/build targets and focused regressions, then complete the required final
+   matrix. Reuse successful binaries/results only while their source,
+   configuration, dependencies and required coverage still match; run new or
+   invalidated checks without gratuitous rebuilds. Test observable behavior
+   without encoding implementation details just to pass.
 2. Review when justified above. Treat findings as hypotheses: verify them, fix
    confirmed in-scope defects at their cause, and reject changes that substitute
    a different goal or add unnecessary machinery.
@@ -102,8 +116,11 @@ coordination. The goal is the requested result, not a clean review queue.
    into a clean verdict. Resolve the specific uncovered work or report it; do
    not blindly retry just to obtain a completed status.
 6. Stop when the requested acceptance checks are observed, required review is
-   complete, and no verified actionable findings remain. If any requirement is
-   blocked or unverified, report partial completion instead. Do not loop on
+   complete, and no verified actionable findings remain. A status reply or
+   completed component is not task completion: execute the next ready action.
+   Report blocked/unverified requirements accurately while continuing independent
+   authorized work. If only async work remains, retain its completion trigger and
+   yield; if nothing can proceed, record the concrete blocker. Do not loop on
    optional polish. A new user-visible failure reopens the affected requirement;
    earlier passing fixtures do not rebut the report.
 
