@@ -51,7 +51,10 @@ coordination. The goal is the requested result, not a clean review queue.
 - For new or materially changed validation runners, use the prescribed project
   stack and presets. Prove the affected launch, output capture, permission,
   deadline and owned stop/join paths with a tiny owned fixture before a costly
-  run. Include these constraints explicitly in delegated assignments.
+  run. Before expanding the test matrix, run a real focused case for each distinct
+  profile/backend setup; listing cases is not startup proof. Stop expansion on
+  startup or lifecycle failure, preserve target and wrapper exits separately,
+  and repair setup using the successful build. Pass these gates to delegates.
 - Run the requested user path on the target revision. Visual and behavioral
   acceptance requires inspecting the actual output and interactions, not just
   builds, internal state, object counts or tests of a directly called helper.
