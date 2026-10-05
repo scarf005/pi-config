@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.99.1",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6.1-sol",
-  "hideThinkingBlock": false,
+  "hideThinkingBlock": true,
   "defaultThinkingLevel": "medium",
   "enabledModels": [
     "openai-codex/gpt-6-astra",
@@ -12,7 +12,6 @@
   "packages": [
     "git:https://github.com/scarf005/assisted-by",
     "npm:@alexanderfortin/pi-token-usage",
-    "../../../repo/assisted-by",
     {
       "source": "../../../repo/etc/one-time-contribution/pi-ask-user-worktrees/fix-decision-gates",
       "skills": []
