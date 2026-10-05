@@ -54,7 +54,10 @@ coordination. The goal is the requested result, not a clean review queue.
   run. Before expanding the test matrix, run a real focused case for each distinct
   profile/backend setup; listing cases is not startup proof. Stop expansion on
   startup or lifecycle failure, preserve target and wrapper exits separately,
-  and repair setup using the successful build. Pass these gates to delegates.
+  and repair setup using the successful build. Default full matrices to summary/
+  failure output; enable success-value dumps only for bounded evidence that needs
+  them. Preserve required full data in artifacts without expanding it into success
+  logs. Pass these gates to delegates.
 - Run the requested user path on the target revision. Visual and behavioral
   acceptance requires inspecting the actual output and interactions, not just
   builds, internal state, object counts or tests of a directly called helper.
