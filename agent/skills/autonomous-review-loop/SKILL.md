@@ -113,7 +113,10 @@ coordination. The goal is the requested result, not a clean review queue.
    Reproduce a suspected unrelated CI failure on the base before attributing it;
    do not alter runners, limits or dependencies merely to make unrelated CI green.
    Check sibling paths for the same demonstrated failure class.
-4. Re-review only to verify an actionable fix, a material new change, or a named
+4. Before dispatch, refresh the lane record and exact named run states; match
+   source/diff identity, review scope and owner. Consume completed results or
+   continue the matching run instead of launching from stale notification text.
+   Re-review only to verify an actionable fix, a material new change, or a named
    uncovered acceptance/risk question. State which gap the next review closes.
    Do not add overlapping reviewers or repeat the same scope just to collect
    reassuring conclusions. If only runtime evidence is missing, obtain it.
