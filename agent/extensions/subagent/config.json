@@ -1,10 +1,14 @@
 {
-  "asyncByDefault": false,
+  "asyncByDefault": true,
   "timeoutMs": 1800000,
-  "globalConcurrencyLimit": 4,
-  "maxActiveAsyncRunsPerSession": 4,
+  "globalConcurrencyLimit": 1,
+  "maxActiveAsyncRunsPerSession": 1,
+  "maxSubagentSpawnsPerRun": 1,
+  "defaultSubagentContext": "fresh",
+  "toolDescriptionMode": "compact",
+  "toolBudget": { "soft": 12, "hard": 20, "block": ["read", "grep", "find", "ls"] },
   "maxSubagentDepth": 1,
   "intercomBridge": { "mode": "off" },
   "missions": { "enabled": false },
-  "scheduledRuns": { "enabled": true }
+  "scheduledRuns": { "enabled": false }
 }

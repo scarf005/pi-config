@@ -2,7 +2,7 @@
 name: reviewer
 description: Read-only adversarial review of diffs, plans, solutions, repositories, PRs, and issues
 model: openai-codex/gpt-6.1-sol
-thinking: high
+thinking: medium
 fast: false
 advertise: true
 tools: read, grep, find, ls
