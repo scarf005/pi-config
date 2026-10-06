@@ -11,8 +11,8 @@ const output = `${coordination}/three-hour-progress`
 const stamp = new Date().toISOString().replaceAll(":", "-")
 return runs.run("three-hour-report", {
   agent: "worker",
-  model: "openai-codex/gpt-6-astra:medium",
-  fast: true,
+  model: "openai-codex/gpt-6.1-sol:medium",
+  fast: false,
   async: true,
   context: "fresh",
   cwd: repo,

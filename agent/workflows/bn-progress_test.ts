@@ -229,7 +229,7 @@ Deno.test("workflow dryRun forwards only validated booleans and retains the work
       child.fast,
       child.async,
       child.context,
-    ], ["worker", "openai-codex/gpt-6-astra:medium", true, true, "fresh"])
+    ], ["worker", "openai-codex/gpt-6.1-sol:medium", false, true, "fresh"])
     const command = child.task.split("\n").find((line) =>
       line.startsWith("DENO_DIR=")
     )!

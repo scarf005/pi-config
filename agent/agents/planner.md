@@ -1,8 +1,9 @@
 ---
 name: planner
 description: Creates implementation plans from requirements and code context
-model: openai-codex/gpt-6-astra
+model: openai-codex/gpt-6.1-sol
 thinking: high
+fast: false
 advertise: true
 tools: read, grep, find, ls
 extensions:

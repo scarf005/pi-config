@@ -1,8 +1,9 @@
 ---
 name: investigator
 description: Evidence-first read-only analysis of source, artifacts, and available external references
-model: openai-codex/gpt-6-astra
+model: openai-codex/gpt-6.1-sol
 thinking: medium
+fast: false
 advertise: true
 tools: read, grep, find, ls, web_search, source_check, fetch_content, get_search_content
 extensions: ../npm/node_modules/pi-web-access/dist/index.js

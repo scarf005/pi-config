@@ -1,8 +1,9 @@
 ---
 name: oracle
 description: Checks decisions and proposed changes against the supplied task and conversation context
-model: openai-codex/gpt-6-astra
+model: openai-codex/gpt-6.1-sol
 thinking: high
+fast: false
 advertise: true
 tools: read, grep, find, ls
 extensions:

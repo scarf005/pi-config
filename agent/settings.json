@@ -29,7 +29,16 @@
     "npm:pi-subagents@0.74.0"
   ],
   "subagents": {
-    "disableBuiltins": true
+    "disableBuiltins": true,
+    "defaultModel": "openai-codex/gpt-6.1-sol",
+    "defaultThinking": "medium",
+    "agentOverrides": {
+      "investigator": { "fast": false },
+      "oracle": { "fast": false },
+      "planner": { "fast": false },
+      "reviewer": { "fast": false },
+      "worker": { "fast": false }
+    }
   },
   "defaultProjectTrust": "always",
   "tuiMode": "fullscreen",
