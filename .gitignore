@@ -8,3 +8,4 @@ agent/pi-subagents/
 agent/bin/
 agent/git/github.com/
 agent/npm/node_modules/
+__pycache__/
