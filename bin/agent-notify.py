@@ -4,8 +4,18 @@
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
+
+
+def short_path(path):
+    """Abbreviate like fish prompt_pwd: ~ for home, one character per parent directory."""
+    home = str(Path.home())
+    if path == home or path.startswith(home + "/"):
+        path = "~" + path[len(home):]
+    *parents, last = path.split("/")
+    return "/".join([*(re.match(r"\.?[^.]?", part).group() for part in parents), last])
 
 
 def main():
@@ -21,8 +31,8 @@ def main():
     if event.get("hook_event_name") != "Stop":
         return
     cwd = event.get("cwd") or os.getcwd()
-    name = {"pi": "pi", "claude": "Claude Code", "codex": "Codex"}[sys.argv[1]]
-    title = f"pi@{cwd}" if sys.argv[1] == "pi" else f"{name}@{cwd}: 작업 완료"
+    name = {"pi": "pi", "claude": "CC", "codex": "cdx"}[sys.argv[1]]
+    title = f"{name}@{short_path(cwd)}" + ("" if sys.argv[1] == "pi" else ": 작업 완료")
     message = event.get("last_assistant_message") or f"작업 완료: {Path(cwd).name}"
     try:
         subprocess.run(

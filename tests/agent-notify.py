@@ -34,8 +34,8 @@ class NotifyTests(unittest.TestCase):
                 self.assertEqual(run.call_count, 1)
                 args = run.call_args.args[0]
                 self.assertEqual(args[1:3], ["--id", "/tmp/a b"])
-                titles = {"pi": "pi@/tmp/a b", "claude": "Claude Code@/tmp/a b: 작업 완료",
-                          "codex": "Codex@/tmp/a b: 작업 완료"}
+                titles = {"pi": "pi@/t/a b", "claude": "CC@/t/a b: 작업 완료",
+                          "codex": "cdx@/t/a b: 작업 완료"}
                 self.assertEqual(args[-2], titles[provider])
                 self.assertEqual(args[-1], "검증 완료: $(never-run)")
 
@@ -45,7 +45,17 @@ class NotifyTests(unittest.TestCase):
                 with self.subTest(provider=provider, cwd=cwd):
                     run = self.invoke({"hook_event_name": "Stop", "cwd": cwd}, provider,
                                       argv_payload=provider == "pi")
-                    self.assertIn(f"@{cwd or os.getcwd()}", run.call_args.args[0][-2])
+                    self.assertIn(f"@{notify.short_path(cwd or os.getcwd())}", run.call_args.args[0][-2])
+
+    def test_short_path_matches_fish_prompt_pwd(self):
+        home = str(Path.home())
+        for path, expected in (
+            (home, "~"), (f"{home}/repo/Cataclysm-BN", "~/r/Cataclysm-BN"),
+            (f"{home}/.config/pi/bin", "~/.c/p/bin"), ("/usr/local/bin", "/u/l/bin"),
+            ("/", "/"), ("/tmp", "/tmp"),
+        ):
+            with self.subTest(path=path):
+                self.assertEqual(notify.short_path(path), expected)
 
     def test_subagents_and_unrelated_events_never_notify(self):
         for event, depth in (
