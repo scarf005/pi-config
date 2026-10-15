@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.99.1",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6.1-sol",
-  "hideThinkingBlock": true,
+  "hideThinkingBlock": false,
   "defaultThinkingLevel": "medium",
   "enabledModels": [
     "openai-codex/gpt-6-astra",
@@ -33,11 +33,26 @@
     "defaultModel": "openai-codex/gpt-6.1-sol",
     "defaultThinking": "medium",
     "agentOverrides": {
-      "investigator": { "thinking": "medium", "fast": false },
-      "oracle": { "thinking": "medium", "fast": false },
-      "planner": { "thinking": "medium", "fast": false },
-      "reviewer": { "thinking": "medium", "fast": false },
-      "worker": { "thinking": "medium", "fast": false }
+      "investigator": {
+        "thinking": "medium",
+        "fast": false
+      },
+      "oracle": {
+        "thinking": "medium",
+        "fast": false
+      },
+      "planner": {
+        "thinking": "medium",
+        "fast": false
+      },
+      "reviewer": {
+        "thinking": "medium",
+        "fast": false
+      },
+      "worker": {
+        "thinking": "medium",
+        "fast": false
+      }
     }
   },
   "defaultProjectTrust": "always",
