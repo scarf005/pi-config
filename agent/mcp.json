@@ -9,6 +9,18 @@
       "command": "/home/scarf/.config/pi/bin/godot-mcp",
       "lifecycle": "lazy-keep-alive",
       "directTools": false
+    },
+    "rea": {
+      "type": "stdio",
+      "command": "/home/scarf/.local/share/mise/installs/node/26.11.1/bin/node",
+      "args": [
+        "/home/scarf/.local/share/mise/installs/node/26.11.1/lib/node_modules/rea-agents/scripts/rea.mjs",
+        "mcp"
+      ],
+      "env": {
+        "GHIDRA_INSTALL_DIR": "/home/scarf/.local/share/ghidra/ghidra_12.1.4_PUBLIC",
+        "JAVA_HOME": "/home/scarf/.cache/coursier/arc/https/github.com/adoptium/temurin24-binaries/releases/download/jdk-24.0.1%252B9/OpenJDK24U-jdk_x64_linux_hotspot_24.0.1_9.tar.gz/jdk-24.0.1+9"
+      }
     }
   }
 }
