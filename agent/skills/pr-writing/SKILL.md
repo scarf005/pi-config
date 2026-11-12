@@ -1,11 +1,15 @@
 ---
 name: pr-writing
-description: Write or edit pull request templates, titles, and bodies in plain, concise prose. Use when opening or updating a PR or changing a repository PR template; remove AI filler without losing reviewer-relevant facts.
+description: Write or edit pull request templates, titles, and bodies, and existing PR or issue bodies, in plain, concise prose. Use when opening or updating a PR, editing a PR or issue body, or changing a repository PR template; remove AI filler without losing reviewer-relevant facts.
 ---
 
 # PR writing
 
 - Read the repository template, contribution rules, actual diff, and validation results first. Match the repository's language and the author's existing voice.
+- Use `.github/pull_request_template.md` when present; fill only required fields with concrete bullets (no `N/A`), include concrete testing steps and expected results, and player-facing titles when changelog rules require them.
+- Before writing a body, search related issues and PRs with `gh search` and link them; `close #N` (including open subissues) before full URLs.
+- Before editing an existing PR or issue body, save its current body and patch it minimally, preserving human prose, checklists, media, and generated blocks; check a body-only diff. Replace stale bullets after follow-ups.
+- Web UI PRs: attach `playwright-cli` screenshots as GitHub attachments or external URLs; never commit media unasked.
 - Use a short title naming the behavior that changes. Avoid claims such as "comprehensive", "robust", "seamless", or "production-ready".
 - Open with the concrete problem or change. Do not announce the summary or repeat the title.
 - Keep only facts a reviewer needs: changed behavior, compatibility, a necessary design choice, validation, and unresolved risks. Link related issues or commits instead of retelling their history.
