@@ -1,21 +1,31 @@
 /**
  * Ports the Claude Code persona hooks: inject the active persona and its per-prompt sticker
  * candidates into every request, then block a settled run that ends without sticker images
- * (`show_image` calls) or whose visible text is not Korean.
+ * (`show_sticker` calls) or whose visible text is not Korean.
  *
  * Index format (persona/stickers/<persona>.tsv): first line `dir<TAB>absolute pack directory`,
- * then `file<TAB>moods<TAB>text`. GIF stickers are skipped because `show_image` draws PNG only.
+ * then `file<TAB>moods<TAB>text`. GIF stickers are skipped because the tool draws PNG only.
+ *
+ * Stickers get their own `show_sticker` tool and entry: `show_image` draws them at 60 cells, which
+ * is 2-3 times the natural size of a 200x200 sticker and repaints a large area on every scroll.
  */
 
 import { existsSync, readFileSync, readdirSync, realpathSync } from "node:fs";
 import { homedir } from "node:os";
 import { basename, join, resolve, sep } from "node:path";
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
+import { Container, Image, Text } from "@earendil-works/pi-tui";
+import { Type } from "typebox";
 
 type Row = { file: string; moods: string[]; text: string };
 type Pack = { dir: string; rows: Row[] };
 
+/** Cells wide enough for a 200x200 sticker to keep its pixel size. */
+export const STICKER_WIDTH_CELLS = 16;
+
 const personaDir = () => process.env.PI_PERSONA_DIR ?? join(homedir(), ".config/persona");
+
+export const STICKER_ENTRY = "persona-sticker";
 
 /** The persona file `active.md` points at. */
 export function activePersona(dir = personaDir()): { stem: string; text: string } | undefined {
@@ -27,7 +37,7 @@ export function activePersona(dir = personaDir()): { stem: string; text: string 
   }
 }
 
-/** Sticker rows that `show_image` can draw: PNG files that exist. */
+/** Sticker rows the tool can draw: PNG files that exist. */
 export function readPack(stem: string, dir = personaDir()): Pack | undefined {
   let lines: string[];
   try {
@@ -72,6 +82,26 @@ export function packDirs(dir = personaDir()): string[] {
   }
 }
 
+export function renderSticker(data: { path?: string; caption?: string } | undefined, theme: Theme): Container {
+  const container = new Container();
+  if (!data?.path) {
+    container.addChild(new Text(theme.fg("warning", "sticker entry without a path"), 1, 0));
+    return container;
+  }
+  if (data.caption) container.addChild(new Text(theme.fg("accent", data.caption), 1, 0));
+  try {
+    container.addChild(new Image(
+      readFileSync(data.path).toString("base64"),
+      "image/png",
+      { fallbackColor: (text) => theme.fg("muted", text) },
+      { maxWidthCells: STICKER_WIDTH_CELLS, filename: basename(data.path) },
+    ));
+  } catch {
+    container.addChild(new Text(theme.fg("warning", `The sticker ${data.path} is no longer available.`), 1, 0));
+  }
+  return container;
+}
+
 export function isSticker(path: string, dirs: string[]): boolean {
   if (!path.trim()) return false;
   const full = resolve(path);
@@ -113,6 +143,29 @@ export default function personaExtension(pi: ExtensionAPI): void {
   let nudged = false;
   let shown = 0;
 
+  pi.registerEntryRenderer<{ path?: string; caption?: string }>(
+    STICKER_ENTRY,
+    (entry, _options, theme) => renderSticker(entry.data, theme),
+  );
+
+  pi.registerTool({
+    name: "show_sticker",
+    label: "Show sticker",
+    description: "Show a persona sticker inline in the terminal at sticker size, next to the reply. The image is not sent to you.",
+    promptSnippet: "Show a persona sticker from the injected candidates inline at sticker size",
+    promptGuidelines: ["Call show_sticker once per sticker, with the sticker text as the caption."],
+    parameters: Type.Object({
+      path: Type.String({ description: "Absolute path of the sticker PNG from the candidate list" }),
+      caption: Type.Optional(Type.String({ description: "The sticker text" })),
+    }),
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const path = resolve(ctx.cwd, params.path);
+      if (!existsSync(path)) throw new Error(`No sticker at ${path}.`);
+      pi.appendEntry(STICKER_ENTRY, { path, caption: params.caption?.trim() || undefined });
+      return { content: [{ type: "text", text: `Showed ${path} to the user.` }], details: undefined };
+    },
+  });
+
   pi.on("before_agent_start", (event, ctx) => {
     if (event.messageType === "user") {
       nudged = false;
@@ -129,7 +182,7 @@ export default function personaExtension(pi: ExtensionAPI): void {
     const pack = ctx.hasUI ? readPack(persona.stem) : undefined;
     if (pack) {
       event.systemPromptOptions.sections.stickers =
-        `## Stickers\n\nEnd every reply with 1-3 stickers whose mood fits it: call show_image once per sticker with its absolute path and the sticker text as the caption. Write no sticker paths as text. Candidates per mood:\n${stickerCandidates(pack)}`;
+        `## Stickers\n\nEnd every reply with 1-3 stickers whose mood fits it: call show_sticker once per sticker with its absolute path and the sticker text as the caption. Write no sticker paths as text. Candidates per mood:\n${stickerCandidates(pack)}`;
     } else {
       delete event.systemPromptOptions.sections.stickers;
     }
@@ -137,7 +190,7 @@ export default function personaExtension(pi: ExtensionAPI): void {
 
   pi.on("tool_execution_end", (event) => {
     const path = (event.args as { path?: unknown } | undefined)?.path;
-    if (event.toolName === "show_image" && typeof path === "string" && isSticker(path, packDirs())) shown++;
+    if (event.toolName === "show_sticker" && typeof path === "string" && isSticker(path, packDirs())) shown++;
   });
 
   pi.on("agent_before_settle", (event, ctx) => {
@@ -145,9 +198,9 @@ export default function personaExtension(pi: ExtensionAPI): void {
     const persona = activePersona();
     const pack = persona && readPack(persona.stem);
     const nudges: string[] = [];
-    if (pack && shown === 0 && ctx.hasUI && pi.getActiveTools().includes("show_image")) {
+    if (pack && shown === 0 && ctx.hasUI && pi.getActiveTools().includes("show_sticker")) {
       nudges.push(
-        "End the reply with 1-3 stickers: call show_image once per sticker whose mood fits the reply, with its absolute path and the sticker text as the caption. Write no sticker paths and do not mention this check. Candidates per mood:\n" +
+        "End the reply with 1-3 stickers: call show_sticker once per sticker whose mood fits the reply, with its absolute path and the sticker text as the caption. Write no sticker paths and do not mention this check. Candidates per mood:\n" +
           stickerCandidates(pack),
       );
     }

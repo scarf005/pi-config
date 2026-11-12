@@ -94,9 +94,10 @@ remains disabled. Reload Pi or start a new session to load the corrected tool gu
 ## Persona and stickers
 
 [`agent/extensions/persona.ts`](agent/extensions/persona.ts) reads `~/.config/persona/active.md` and adds that persona and its
-per-mood sticker candidates to every request. When a run settles, it asks once for a missing sticker (`show_image` call, PNG
-rows only) and for a Korean rewrite of English prose. The gate stays off in subagents, in print and JSON mode, and when the
-persona has no sticker index. `PI_PERSONA_DIR` selects another persona directory.
+per-mood sticker candidates to every request. When a run settles, it asks once for a missing sticker (`show_sticker` call,
+PNG rows only) and for a Korean rewrite of English prose. The gate stays off in subagents, in print and JSON mode, and when
+the persona has no sticker index. `PI_PERSONA_DIR` selects another persona directory. `show_sticker` draws at 16 cells
+instead of `show_image`'s 60, which is the pixel size of a 200x200 sticker and repaints a small area on scroll.
 
 ```sh
 node tests/persona-extension.mjs # Injection, sticker gate and Korean gate; no model calls

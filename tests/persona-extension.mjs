@@ -6,7 +6,6 @@ import { join } from "node:path";
 import { root } from "./support.mjs";
 
 const require = createRequire(join(root, "agent/npm/package.json"));
-const jiti = require("jiti")(import.meta.url);
 
 const dir = mkdtempSync(join(tmpdir(), "persona-"));
 const pack = join(dir, "pack");
@@ -25,13 +24,27 @@ writeFileSync(
     "004.gif\tgreet\t움짤",
   ].join("\n"),
 );
+// Pi resolves these for extensions at runtime; the test supplies minimal stubs.
+for (const [name, source] of Object.entries({
+  "pi-tui.js": "export class Container { addChild() { return this } } export class Text {} export class Image {}",
+  "typebox.js": "export const Type = { Object: (o) => o, String: (o) => o, Optional: (o) => o }",
+})) writeFileSync(join(dir, name), source);
+const jiti = require("jiti")(import.meta.url, {
+  alias: {
+    "@earendil-works/pi-tui": join(dir, "pi-tui.js"),
+    typebox: join(dir, "typebox.js"),
+  },
+});
+
 process.env.PI_PERSONA_DIR = dir;
 
 const extension = await jiti.import(join(root, "agent/extensions/persona.ts"), { default: true });
 const handlers = new Map();
 const pi = {
   on: (name, handler) => handlers.set(name, handler),
-  getActiveTools: () => ["show_image"],
+  getActiveTools: () => ["show_sticker"],
+  registerEntryRenderer: () => {},
+  registerTool: () => {},
 };
 extension(pi);
 assert.deepEqual([...handlers.keys()], ["before_agent_start", "tool_execution_end", "agent_before_settle"]);
@@ -65,21 +78,21 @@ prompt();
 const missing = settle(ctx("끝이에요"));
 assert.equal(missing.continue, true);
 assert.equal(missing.entries.at(-1).customType, "persona-gate");
-assert.match(missing.entries.at(-1).content, /show_image/);
+assert.match(missing.entries.at(-1).content, /show_sticker/);
 assert.match(missing.entries.at(-1).content, new RegExp(pack), "nudges with the sticker candidates");
 assert.equal(settle(ctx("끝이에요")), undefined, "nudges once per prompt");
 
 prompt();
-handlers.get("tool_execution_end")({ toolName: "show_image", args: { path: join(pack, "001.png") } });
+handlers.get("tool_execution_end")({ toolName: "show_sticker", args: { path: join(pack, "001.png") } });
 assert.equal(settle(ctx("보여드렸어요")), undefined, "a shown sticker and a Korean reply pass");
 
 prompt();
-handlers.get("tool_execution_end")({ toolName: "show_image", args: { path: "/tmp/screenshot.png" } });
+handlers.get("tool_execution_end")({ toolName: "show_sticker", args: { path: "/tmp/screenshot.png" } });
 const english = settle(ctx("The build passes and all tests ran clean."));
 assert.match(english.entries.at(-1).content, /Korean/, "blocks English prose");
 
 prompt();
-handlers.get("tool_execution_end")({ toolName: "show_image", args: { path: `${pack}/001.png` } });
+handlers.get("tool_execution_end")({ toolName: "show_sticker", args: { path: `${pack}/001.png` } });
 assert.equal(settle(ctx("경로는 /tmp/a/b.ts 와 `npm test` 입니다")), undefined, "code and paths are not prose");
 
 process.env.PI_SUBAGENT_DEPTH = "1";
