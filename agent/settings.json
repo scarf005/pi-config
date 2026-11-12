@@ -90,6 +90,9 @@
   "defaultProjectTrust": "always",
   "tuiMode": "fullscreen",
   "theme": "dark",
+  "terminal": {
+    "images": "kitty"
+  },
   "extensionChangelogVersions": {
     "{\"source\":\"npm:@alexanderfortin/pi-token-usage\",\"scope\":\"user\"}": "0.4.0",
     "{\"source\":\"../../../repo/etc/one-time-contribution/pi-ask-user-worktrees/fix-decision-gates\",\"scope\":\"user\"}": "0.14.0",
