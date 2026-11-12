@@ -91,6 +91,17 @@ were **28,605 bytes** separately. Provider framing and per-turn hook changes are
 Like the other local packages, it must be provisioned on another machine; no installed `node_modules` file is patched. Its bundled skill
 remains disabled. Reload Pi or start a new session to load the corrected tool guidance.
 
+## Persona and stickers
+
+[`agent/extensions/persona.ts`](agent/extensions/persona.ts) reads `~/.config/persona/active.md` and adds that persona and its
+per-mood sticker candidates to every request. When a run settles, it asks once for a missing sticker (`show_image` call, PNG
+rows only) and for a Korean rewrite of English prose. The gate stays off in subagents, in print and JSON mode, and when the
+persona has no sticker index. `PI_PERSONA_DIR` selects another persona directory.
+
+```sh
+node tests/persona-extension.mjs # Injection, sticker gate and Korean gate; no model calls
+```
+
 ## Subagents
 
 [Settings](agent/settings.json) pin [pi-subagents](https://github.com/nicobailon/pi-subagents) 0.74.0.
