@@ -137,11 +137,28 @@ export function replyText(ctx: ExtensionContext): string {
     .join("\n");
 }
 
+/** Text the assistant wrote in its latest turn, empty when that turn only called tools. */
+export function lastTurnText(ctx: ExtensionContext): string {
+  const last = ctx.sessionManager.getBranch()
+    .findLast((entry) => entry.type === "message" && entry.message.role === "assistant");
+  if (last?.type !== "message") return "";
+  return last.message.content
+    .flatMap((block) => block.type === "text" ? [block.text] : [])
+    .join("\n");
+}
+
 export default function personaExtension(pi: ExtensionAPI): void {
   if ((process.env.PI_SUBAGENT_DEPTH ?? "0") !== "0") return;
 
   let nudged = false;
   let shown = 0;
+  /** Calls whose assistant turn already wrote the reply text, so the sticker is the last thing the user sees. */
+  const replied = new Set<string>();
+
+  // `ctx.sessionManager` is current through the assistant tool-calling message only in `tool_call`.
+  pi.on("tool_call", (event, ctx) => {
+    if (event.toolName === "show_sticker" && lastTurnText(ctx) !== "") replied.add(event.toolCallId);
+  });
 
   pi.registerEntryRenderer<{ path?: string; caption?: string }>(
     STICKER_ENTRY,
@@ -153,16 +170,29 @@ export default function personaExtension(pi: ExtensionAPI): void {
     label: "Show sticker",
     description: "Show a persona sticker inline in the terminal at sticker size, next to the reply. The image is not sent to you.",
     promptSnippet: "Show a persona sticker from the injected candidates inline at sticker size",
-    promptGuidelines: ["Call show_sticker once per sticker, with the sticker text as the caption."],
+    promptGuidelines: [
+      "Call show_sticker once per sticker, with the sticker text as the caption.",
+      "Call show_sticker last, after the reply text is complete: a sticker batch ends the turn.",
+    ],
     parameters: Type.Object({
       path: Type.String({ description: "Absolute path of the sticker PNG from the candidate list" }),
       caption: Type.Optional(Type.String({ description: "The sticker text" })),
     }),
-    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+    async execute(toolCallId, params, _signal, _onUpdate, ctx) {
+      // Drop the call from `replied` even when the file is gone, so a stale id cannot end a later turn
+      // early.
+      const terminate = replied.delete(toolCallId);
       const path = resolve(ctx.cwd, params.path);
       if (!existsSync(path)) throw new Error(`No sticker at ${path}.`);
+      if (isSticker(path, packDirs())) shown++;
       pi.appendEntry(STICKER_ENTRY, { path, caption: params.caption?.trim() || undefined });
-      return { content: [{ type: "text", text: `Showed ${path} to the user.` }], details: undefined };
+      // Pi would send a follow-up request for this batch, and the sticker instruction only makes the
+      // model answer the same prompt again. Ending the batch keeps the reply the user already has.
+      return {
+        content: [{ type: "text", text: `Showed ${path} to the user.` }],
+        details: undefined,
+        terminate,
+      };
     },
   });
 
@@ -170,6 +200,7 @@ export default function personaExtension(pi: ExtensionAPI): void {
     if (event.messageType === "user") {
       nudged = false;
       shown = 0;
+      replied.clear();
     }
     const persona = activePersona();
     if (!persona) {
@@ -186,11 +217,6 @@ export default function personaExtension(pi: ExtensionAPI): void {
     } else {
       delete event.systemPromptOptions.sections.stickers;
     }
-  });
-
-  pi.on("tool_execution_end", (event) => {
-    const path = (event.args as { path?: unknown } | undefined)?.path;
-    if (event.toolName === "show_sticker" && typeof path === "string" && isSticker(path, packDirs())) shown++;
   });
 
   pi.on("agent_before_settle", (event, ctx) => {
