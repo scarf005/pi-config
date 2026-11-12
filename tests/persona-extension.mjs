@@ -96,6 +96,10 @@ assert.equal(drawn.terminate, true, "ends the batch once the reply text is on sc
 assert.equal(settle(ctx("보여드렸어요")), undefined, "a shown sticker and a Korean reply pass");
 
 prompt();
+const at = await show(`@${join(pack, "001.png")}`, ctx("끝이에요"));
+assert.equal(at.terminate, true, "strips the @ prefix some models add to path arguments");
+
+prompt();
 const early = await show(join(pack, "002.png"), ctx(""));
 assert.equal(early.terminate, false, "keeps the turn open when the sticker comes before any reply text");
 

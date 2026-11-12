@@ -182,7 +182,8 @@ export default function personaExtension(pi: ExtensionAPI): void {
       // Drop the call from `replied` even when the file is gone, so a stale id cannot end a later turn
       // early.
       const terminate = replied.delete(toolCallId);
-      const path = resolve(ctx.cwd, params.path);
+      // Some models prefix path arguments with `@`; built-in tools strip it before resolving.
+      const path = resolve(ctx.cwd, params.path.replace(/^@/, ""));
       if (!existsSync(path)) throw new Error(`No sticker at ${path}.`);
       if (isSticker(path, packDirs())) shown++;
       pi.appendEntry(STICKER_ENTRY, { path, caption: params.caption?.trim() || undefined });
