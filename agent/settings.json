@@ -1,12 +1,10 @@
 {
   "lastChangelogVersion": "1.5.2",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-6.1-sol",
+  "defaultProvider": "opencode-go",
+  "defaultModel": "deepseek-v4.1-flash",
   "hideThinkingBlock": false,
   "defaultThinkingLevel": "medium",
   "enabledModels": [
-    "deepseek/deepseek-flash",
-    "deepseek/deepseek-v4-pro",
     "opencode-go/claude-haiku-5-5",
     "opencode-go/minimax-m3",
     "opencode-go/qwen3.7-plus",
