@@ -15,6 +15,24 @@
           "contextWindow": 1050000
         }
       }
+    },
+    "local": {
+      "name": "Local llama-server",
+      "baseUrl": "http://127.0.0.1:9931/v1",
+      "api": "openai-completions",
+      "apiKey": "local",
+      "compat": {
+        "thinkingFormat": "qwen-chat-template"
+      },
+      "models": [
+        {
+          "id": "qwen",
+          "name": "Local Qwen",
+          "reasoning": true,
+          "contextWindow": 32768,
+          "maxTokens": 8192
+        }
+      ]
     }
   }
 }
